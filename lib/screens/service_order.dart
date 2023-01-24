@@ -4,6 +4,7 @@ import 'package:oilappadmin/model/service_order_with_vehicles_model.dart';
 import 'package:oilappadmin/model/users_vehicles_model.dart';
 import 'package:oilappadmin/screens/user_service_details.dart';
 import 'package:oilappadmin/services/services_order.dart';
+import 'package:oilappadmin/widgets/emptycardmessage.dart';
 import 'package:oilappadmin/widgets/loading_widget.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -69,16 +70,16 @@ class _ServiceOrdersState extends State<ServiceOrders> {
             StreamBuilder(
               stream: serviceOrdersService.suggestionStream,
               builder: ((context, snapshot) {
-                if (snapshot.data == null) return Center(
-                  child:  Column(
-                    children: [
-                      SizedBox(height: 20,),
-                      Container(
-                        child:  CircularProgressIndicator(),
-                      ),
-                    ],
-                  ),
-                );
+                if (!snapshot.hasData) {
+                  return circularProgress();
+                }
+
+                if (snapshot.data!.isEmpty) {
+                  return const EmptyCardMessage(
+                    listTitle: 'No hay Ordenes actualmente',
+                    message: 'No hay Ordenes por lo momentos',
+                  );
+                }
 
                 return ListView.builder(
                   physics: NeverScrollableScrollPhysics(),

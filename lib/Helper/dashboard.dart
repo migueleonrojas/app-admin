@@ -11,6 +11,7 @@ import 'package:oilappadmin/screens/service_order.dart';
 import 'package:oilappadmin/screens/services.dart';
 import 'package:oilappadmin/screens/users.dart';
 import 'package:oilappadmin/screens/vehicles.dart';
+import 'package:oilappadmin/widgets/loading_widget.dart';
 import 'package:oilappadmin/widgets/nointernetalertdialog.dart';
 
 class Dashboard extends StatelessWidget {
@@ -109,12 +110,16 @@ class Dashboard extends StatelessWidget {
                 StreamBuilder<QuerySnapshot>(
                   stream: _db.collection("users").snapshots(),
                   builder: (context, snapshot) {
-                    if (snapshot.data == null) return Text('');
-                    return CustomCard(
-                      titleicon: Icons.people_alt_outlined,
-                      titletext: "Usuarios",
-                      counttext: snapshot.data!.docs.length.toString(),
-                                              onTap: () async {
+                    if (!snapshot.hasData) {
+                      return circularProgress();
+                    }
+
+                    if (snapshot.data!.docs.isEmpty) {
+                      return CustomCard(
+                        titleicon: Icons.people_alt_outlined,
+                        titletext: "Usuarios",
+                        counttext: snapshot.data!.docs.length.toString(),
+                        onTap: () async {
                           var connectivityResult =  await Connectivity().checkConnectivity();
                           if (connectivityResult != ConnectivityResult.mobile &&
                               connectivityResult != ConnectivityResult.wifi) {
@@ -130,7 +135,31 @@ class Dashboard extends StatelessWidget {
                           Route route = MaterialPageRoute(builder: (c) => Users());
                               
                           Navigator.push(context, route);
-                        },
+                      },
+                      );
+                    }
+
+                    return CustomCard(
+                      titleicon: Icons.people_alt_outlined,
+                      titletext: "Usuarios",
+                      counttext: snapshot.data!.docs.length.toString(),
+                      onTap: () async {
+                          var connectivityResult =  await Connectivity().checkConnectivity();
+                          if (connectivityResult != ConnectivityResult.mobile &&
+                              connectivityResult != ConnectivityResult.wifi) {
+                            return showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+    
+                                return const NoInternetAlertDialog();
+                              },
+                            );
+                          }
+    
+                          Route route = MaterialPageRoute(builder: (c) => Users());
+                              
+                          Navigator.push(context, route);
+                      },
                       
                     );
                   },
@@ -139,7 +168,35 @@ class Dashboard extends StatelessWidget {
                   stream: _db.collection("categories").snapshots(),
                   builder: (context, snapshot) {
                     
-                    if (snapshot.data == null) return const Text('');
+                    if (!snapshot.hasData) {
+                      return circularProgress();
+                    }
+
+                    if (snapshot.data!.docs.isEmpty) {
+                      return CustomCard(
+                        titleicon: Icons.category_outlined,
+                        titletext: "Categorias",
+                        counttext: snapshot.data!.docs.length.toString(),
+                        onTap: () async {
+                        var connectivityResult =
+                              await Connectivity().checkConnectivity();
+                          if (connectivityResult != ConnectivityResult.mobile &&
+                              connectivityResult != ConnectivityResult.wifi) {
+                            return showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+    
+                                return const NoInternetAlertDialog();
+                              },
+                            );
+                          }
+    
+                          Route route = MaterialPageRoute(builder: (c) => CategoriesServicesAndProducts());
+                          
+                          Navigator.push(context, route);
+                      },
+                      );
+                    }
                     return CustomCard(
                       titleicon: Icons.category_outlined,
                       titletext: "Categorias",
@@ -168,7 +225,35 @@ class Dashboard extends StatelessWidget {
                 StreamBuilder<QuerySnapshot>(
                   stream: _db.collection("products").snapshots(),
                   builder: (context, snapshot) {
-                    if (snapshot.data == null) return const Text('');
+                    if (!snapshot.hasData) {
+                      return circularProgress();
+                    }
+
+                    if (snapshot.data!.docs.isEmpty) {
+                      return CustomCard(
+                        titleicon: Icons.list_alt_outlined,
+                        titletext: "Productos",
+                        counttext: snapshot.data!.docs.length.toString(),
+                        onTap: () async {
+                        var connectivityResult =
+                              await Connectivity().checkConnectivity();
+                          if (connectivityResult != ConnectivityResult.mobile &&
+                              connectivityResult != ConnectivityResult.wifi) {
+                            return showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+    
+                                return const NoInternetAlertDialog();
+                              },
+                            );
+                          }
+    
+                          Route route = MaterialPageRoute(builder: (c) => Products());
+                          
+                          Navigator.push(context, route);
+                      },
+                      );
+                    }
                     return CustomCard(
                       titleicon: Icons.list_alt_outlined,
                       titletext: "Productos",
@@ -197,7 +282,35 @@ class Dashboard extends StatelessWidget {
                 StreamBuilder<QuerySnapshot>(
                   stream: _db.collection("brands").snapshots(),
                   builder: (context, snapshot) {
-                    if (snapshot.data == null) return Text('');
+                    if (!snapshot.hasData) {
+                      return circularProgress();
+                    }
+
+                    if (snapshot.data!.docs.isEmpty) {
+                      return CustomCard(
+                        titleicon: Icons.branding_watermark_outlined,
+                        titletext: "Marcas",
+                        counttext: snapshot.data!.docs.length.toString(),
+                        onTap: () async {
+                        var connectivityResult =
+                              await Connectivity().checkConnectivity();
+                          if (connectivityResult != ConnectivityResult.mobile &&
+                              connectivityResult != ConnectivityResult.wifi) {
+                            return showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+    
+                                return const NoInternetAlertDialog();
+                              },
+                            );
+                          }
+    
+                          Route route = MaterialPageRoute(builder: (c) => BrandsServicesAndProducts());
+                          
+                          Navigator.push(context, route);
+                      },
+                      );
+                    }
                     return CustomCard(
                       titleicon: Icons.branding_watermark_outlined,
                       titletext: "Marcas",
@@ -226,7 +339,35 @@ class Dashboard extends StatelessWidget {
                 StreamBuilder<QuerySnapshot>(
                     stream: _db.collection("service").snapshots(),
                     builder: (context, snapshot) {
-                      if (snapshot.data == null) return Text('');
+                      if (!snapshot.hasData) {
+                      return circularProgress();
+                    }
+
+                    if (snapshot.data!.docs.isEmpty) {
+                      return CustomCard(
+                        titleicon: Icons.calendar_today_outlined,
+                        titletext: "Servicios",
+                        counttext: snapshot.data!.docs.length.toString(),
+                        onTap: () async {
+                          var connectivityResult =
+                              await Connectivity().checkConnectivity();
+                          if (connectivityResult != ConnectivityResult.mobile &&
+                              connectivityResult != ConnectivityResult.wifi) {
+                            return showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+    
+                                return const NoInternetAlertDialog();
+                              },
+                            );
+                          }
+    
+                          Route route = MaterialPageRoute(builder: (c) => Services());
+                              
+                          Navigator.push(context, route);
+                        },
+                      );
+                    }
                       return CustomCard(
                         titleicon: Icons.calendar_today_outlined,
                         titletext: "Servicios",
@@ -254,7 +395,34 @@ class Dashboard extends StatelessWidget {
                 StreamBuilder<QuerySnapshot>(
                     stream: _db.collection("orders").snapshots(),
                     builder: (context, snapshot) {
-                      if (snapshot.data == null) return Text('');
+                      if (!snapshot.hasData) {
+                        return circularProgress();
+                      }
+
+                      if (snapshot.data!.docs.isEmpty) {
+                        return CustomCard(
+                          titleicon: Icons.local_shipping_outlined,
+                          titletext: "Pedidos",
+                          counttext: snapshot.data!.docs.length.toString(),
+                          onTap: () async {
+                            var connectivityResult =
+                                await Connectivity().checkConnectivity();
+                            if (connectivityResult != ConnectivityResult.mobile &&
+                                connectivityResult != ConnectivityResult.wifi) {
+                              return showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+      
+                                  return const NoInternetAlertDialog();
+                                },
+                              );
+                            }
+      
+                            Route route = MaterialPageRoute(builder: (c) => ControlOrders());
+                            Navigator.push(context, route);
+                          },
+                        );
+                      }
                       return CustomCard(
                         titleicon: Icons.local_shipping_outlined,
                         titletext: "Pedidos",
@@ -282,7 +450,35 @@ class Dashboard extends StatelessWidget {
                 StreamBuilder<QuerySnapshot>(
                     stream: _db.collection("serviceOrder").snapshots(),
                     builder: (context, snapshot) {
-                      if (snapshot.data == null) return Text('');
+                      if (!snapshot.hasData) {
+                        return circularProgress();
+                      }
+
+                      if (snapshot.data!.docs.isEmpty) {
+                        return CustomCard(
+                          titleicon: Icons.date_range_outlined,
+                          titletext: "Ordenes",
+                          counttext: snapshot.data!.docs.length.toString(),
+                          onTap: () async {
+                          var connectivityResult =
+                              await Connectivity().checkConnectivity();
+                          if (connectivityResult != ConnectivityResult.mobile &&
+                              connectivityResult != ConnectivityResult.wifi) {
+                            return showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+    
+                                return const NoInternetAlertDialog();
+                              },
+                            );
+                          }
+    
+                          Route route = MaterialPageRoute(builder: (c) => ServiceOrders());
+                        
+                          Navigator.push(context, route);
+                        },
+                        );
+                      }
                       return CustomCard(
                         titleicon: Icons.date_range_outlined,
                         titletext: "Ordenes",
@@ -310,7 +506,34 @@ class Dashboard extends StatelessWidget {
                 StreamBuilder<QuerySnapshot>(
                     stream: _db.collection("usersVehicles").snapshots(),
                     builder: (context, snapshot) {
-                      if (snapshot.data == null) return Text('');
+                      if (!snapshot.hasData) {
+                        return circularProgress();
+                      }
+
+                      if (snapshot.data!.docs.isEmpty) {
+                        return CustomCard(
+                          titleicon: Icons.car_repair,
+                          titletext: "Vehiculos",
+                          counttext: snapshot.data!.docs.length.toString(),
+                          onTap: () async {
+                          var connectivityResult =  await Connectivity().checkConnectivity();
+                          if (connectivityResult != ConnectivityResult.mobile &&
+                              connectivityResult != ConnectivityResult.wifi) {
+                            return showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+    
+                                return const NoInternetAlertDialog();
+                              },
+                            );
+                          }
+    
+                          Route route = MaterialPageRoute(builder: (c) => Vehicles());
+                              
+                          Navigator.push(context, route);
+                        },
+                        );
+                      }
                       return CustomCard(
                         titleicon: Icons.car_repair,
                         titletext: "Vehiculos",

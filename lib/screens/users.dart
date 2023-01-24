@@ -6,6 +6,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:oilappadmin/screens/edit_user.dart';
 import 'package:oilappadmin/screens/main_screen.dart';
+import 'package:oilappadmin/widgets/emptycardmessage.dart';
+import 'package:oilappadmin/widgets/loading_widget.dart';
 
 class Users extends StatefulWidget {
   @override
@@ -35,7 +37,19 @@ class _UsersState extends State<Users> {
                   .collection('users')
                   .snapshots(),
               builder: (context, snapshot) {
-                if (snapshot.data == null) return Text('');
+                
+                if (!snapshot.hasData) {
+                  return circularProgress();
+                }
+
+                if (snapshot.data!.docs.isEmpty) {
+                  return const EmptyCardMessage(
+                    listTitle: 'No hay usuarios actualmente',
+                    message: 'No hay usuarios por lo momentos',
+                  );
+                }
+
+
                 return Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Container(

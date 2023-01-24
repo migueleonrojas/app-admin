@@ -5,6 +5,8 @@ import 'package:oilappadmin/screens/product_search.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
+import 'package:oilappadmin/widgets/emptycardmessage.dart';
+import 'package:oilappadmin/widgets/loading_widget.dart';
 
 class Products extends StatefulWidget {
   @override
@@ -48,7 +50,18 @@ class _ProductsState extends State<Products> {
                   .orderBy("publishedDate", descending: true)
                   .snapshots(),
               builder: (context, snapshot) {
-                if (snapshot.data == null) return Text('');
+
+                if (!snapshot.hasData) {
+                  return circularProgress();
+                }
+
+                if(snapshot.data!.docs.isEmpty) {
+                  return const EmptyCardMessage(
+                    listTitle: 'No hay productos',
+                    message: 'No hay productos actualmente',
+                  );
+                }
+                
                 return Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Container(

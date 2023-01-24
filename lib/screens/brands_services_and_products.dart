@@ -12,6 +12,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:oilappadmin/screens/edit_vehicle.dart';
 import 'package:oilappadmin/screens/main_screen.dart';
+import 'package:oilappadmin/widgets/emptycardmessage.dart';
+import 'package:oilappadmin/widgets/loading_widget.dart';
 
 class BrandsServicesAndProducts extends StatefulWidget {
   @override
@@ -41,7 +43,16 @@ class _BrandsServicesAndProductsState extends State<BrandsServicesAndProducts> {
                   .collection('brands')
                   .snapshots(),
               builder: (context, snapshot) {
-                if (snapshot.data == null) return const Text('');
+                if (!snapshot.hasData) {
+                  return circularProgress();
+                }
+
+                if(snapshot.data!.docs.isEmpty) {
+                  return const EmptyCardMessage(
+                    listTitle: 'No hay marcas de productos o servicios',
+                    message: 'No hay marcas de productos o servicios actualmente',
+                  );
+                }
                 return Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Container(

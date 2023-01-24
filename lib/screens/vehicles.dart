@@ -9,6 +9,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:oilappadmin/screens/edit_vehicle.dart';
 import 'package:oilappadmin/screens/main_screen.dart';
+import 'package:oilappadmin/widgets/emptycardmessage.dart';
+import 'package:oilappadmin/widgets/loading_widget.dart';
 
 class Vehicles extends StatefulWidget {
   @override
@@ -43,7 +45,16 @@ class _VehiclesState extends State<Vehicles> {
                   .orderBy("registrationDate", descending: true)
                   .snapshots(), */
               builder: (context, snapshot) {
-                if (snapshot.data == null) return Text('');
+                if (!snapshot.hasData) {
+                  return circularProgress();
+                }
+
+                if (snapshot.data!.docs.isEmpty) {
+                  return const EmptyCardMessage(
+                    listTitle: 'No hay vehiculos actualmente',
+                    message: 'No hay vehiculos por lo momentos',
+                  );
+                }
                 else if(snapshot.data!.docs.isEmpty) {
                   return Container(
                     width: MediaQuery.of(context).size.width,
