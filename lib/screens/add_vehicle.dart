@@ -105,7 +105,6 @@ class _AddVehicleState extends State<AddVehicle> {
                 hint: const Text('Selecciona Marca del Vehiculo'),
                 items: 
                   brands.map((e) {
-                    print(e);
                     return DropdownMenuItem(
                       value: e['id'],
                       child: Text(e['name']),
@@ -149,7 +148,9 @@ class _AddVehicleState extends State<AddVehicle> {
               }
               else {
                 final lastId = await _modelVehicle.getLastIdRow();
-                _modelVehicle.createModelVehicle(int.parse(brandId), lastId, newname,newname.toLowerCase());
+                
+                _modelVehicle.createModelVehicle(int.parse(brandId), lastId, newname, newname.toLowerCase());
+
                 Fluttertoast.showToast(msg: 'Modelo del Vehiculo Creado');
                 setState(() {
                   modelsController.text = '';

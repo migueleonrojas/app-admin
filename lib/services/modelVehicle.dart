@@ -92,13 +92,19 @@ class ModelVehicle {
 
   Future <int> getLastIdRow() async {
 
-    final QuerySnapshot<Map<String, dynamic>> brandsVehicle = await _firebaseFirestore.collection('modelsVehicle').get();
+    final QuerySnapshot<Map<String, dynamic>> brandsVehicle = await _firebaseFirestore
+      .collection('modelsVehicle')
+      .orderBy('id',descending: false)
+      .get();
+
+    
 
     if(brandsVehicle.docs.isEmpty){
       
       return 1;
     }
     else{
+      
       final lastId = brandsVehicle.docs.last.data()['id'] + 1;
       return lastId;
     }

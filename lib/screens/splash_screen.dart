@@ -16,7 +16,7 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
-    Timer(Duration(seconds: 5), () async {
+    Timer(Duration(seconds: 1), () async {
       if (await auth.currentUser != null) {
         Route route = MaterialPageRoute(builder: (_) => MainScreen());
         Navigator.pushReplacement(context, route);
