@@ -16,15 +16,16 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
-    Timer(Duration(seconds: 1), () async {
-      if (await auth.currentUser != null) {
+    Future.delayed(Duration.zero, () async {
+      if (auth.currentUser != null) {
         Route route = MaterialPageRoute(builder: (_) => MainScreen());
         Navigator.pushReplacement(context, route);
       } else {
         Route route = MaterialPageRoute(builder: (_) => LoginScreen());
         Navigator.pushReplacement(context, route);
       }
-    });
+    },);
+    
   }
 
   @override

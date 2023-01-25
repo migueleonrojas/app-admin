@@ -895,13 +895,52 @@ class _UserServiceDetailsState extends State<UserServiceDetails> {
         actions: [
           ElevatedButton(
             onPressed: () async {
-              bool restartInterval =  await updateVehicle();
-              if(restartInterval){
-                Navigator.of(context).pop(true);
+              
+              DateTime? lastDateCarNote;
+
+              QuerySnapshot<Map<String, dynamic>> carNotesUserVehicles = await FirebaseFirestore.instance
+                .collection('carNotesUserVehicles')
+                .where('vehicleId',isEqualTo: widget.usersVehiclesModel.vehicleId)
+                .where('serviceName', isEqualTo: 'Aceite con filtro')
+                .orderBy('date',descending: false)                    
+                .get();
+
+              for(final carNotesUserVehicle in carNotesUserVehicles.docs){
+                
+                lastDateCarNote = carNotesUserVehicle.data()['date'].toDate();
+      
               }
-              else{
-                Navigator.of(context).pop(false);
+              
+              if(lastDateCarNote == null){
+
+                bool restartInterval =  await updateVehicle();
+                if(restartInterval){
+                  Navigator.of(context).pop(true);
+                }
+                else{
+                  Navigator.of(context).pop(false);
+                }
+
               }
+              else {
+
+                if(DateTime.now().compareTo(lastDateCarNote) > 0){
+
+                  bool restartInterval =  await updateVehicle();
+                  if(restartInterval){
+                    Navigator.of(context).pop(true);
+                  }
+                  else{
+                    Navigator.of(context).pop(false);
+                  }
+
+                }
+                else {
+                  Navigator.of(context).pop(true);
+                }
+
+              }
+
             },
             child: Text('Aceptar')
           ),
@@ -982,8 +1021,8 @@ class _UserServiceDetailsState extends State<UserServiceDetails> {
       userId: widget.usersVehiclesModel.userId,
       brand: widget.usersVehiclesModel.brand,
       model: widget.usersVehiclesModel.model,
-      mileage: widget.usersVehiclesModel.mileage,
-      year: int.parse(mileageController.text),
+      mileage: int.parse(mileageController.text),
+      year: widget.usersVehiclesModel.year,
       color: widget.usersVehiclesModel.color,
       name: widget.usersVehiclesModel.name,
       tuition: widget.usersVehiclesModel.tuition,

@@ -16,10 +16,10 @@ Future<void> main() async {
   AutoParts.auth = FirebaseAuth.instance;
   AutoParts.sharedPreferences = await SharedPreferences.getInstance();
   AutoParts.firebaseAppCheck = FirebaseAppCheck.instance;
-  await AutoParts.firebaseAppCheck!.activate(
+  /* await AutoParts.firebaseAppCheck!.activate(
      webRecaptchaSiteKey: '92933631-F622-40CC-9DC6-DA96A6491FC2',
      androidProvider: AndroidProvider.playIntegrity
-  );
+  ); */
   
   AutoParts.firestore = FirebaseFirestore.instance;
   runApp(MyApp());
