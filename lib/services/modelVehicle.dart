@@ -10,6 +10,33 @@ class ModelVehicle {
   final StreamController <List<ModelVehicleWithBrand>> _suggestionStreamControler = StreamController.broadcast();
   Stream<List<ModelVehicleWithBrand>> get suggestionStream => _suggestionStreamControler.stream;
 
+
+  getModelsVehicle() async {
+    List<ModelVehicleWithBrand> modelsWithBrandName = [];
+    QuerySnapshot<Map<String, dynamic>> querySnapshotModel = await FirebaseFirestore.instance
+      .collection('modelsVehicle').get();
+
+    List<QueryDocumentSnapshot<Map<String,dynamic>>> documentsModels = querySnapshotModel.docs;
+
+    for(final documentModel in documentsModels) {
+      
+      QuerySnapshot<Map<String, dynamic>> querySnapshotBrand = await FirebaseFirestore.instance.collection('brandsVehicle').where('id', isEqualTo: (documentModel.data() as dynamic)['id_brand']).get();
+      List<QueryDocumentSnapshot<Map<String,dynamic>>> documentsBrands = querySnapshotBrand.docs;
+      for(final documentBrand in documentsBrands){
+        
+        modelsWithBrandName.add(ModelVehicleWithBrand.fromJson({
+          "brandName": (documentBrand.data() as dynamic)['name'],
+          "modelVehicle": documentModel.data()
+        }));
+        
+          
+      }
+    } 
+    _suggestionStreamControler.add(modelsWithBrandName);
+    
+  }
+
+
   Future <bool> validateNoDuplicateRows(String name, String slug, int idBrand) async {
 
     final QuerySnapshot<Map<String, dynamic>> result = await _firebaseFirestore
@@ -113,28 +140,5 @@ class ModelVehicle {
 
 
 
-  getModelsVehicle() async {
-    List<ModelVehicleWithBrand> modelsWithBrandName = [];
-    QuerySnapshot<Map<String, dynamic>> querySnapshotModel = await FirebaseFirestore.instance
-      .collection('modelsVehicle').get();
-
-    List<QueryDocumentSnapshot<Map<String,dynamic>>> documentsModels = querySnapshotModel.docs;
-
-    for(final documentModel in documentsModels) {
-      
-      QuerySnapshot<Map<String, dynamic>> querySnapshotBrand = await FirebaseFirestore.instance.collection('brandsVehicle').where('id', isEqualTo: (documentModel.data() as dynamic)['id_brand']).get();
-      List<QueryDocumentSnapshot<Map<String,dynamic>>> documentsBrands = querySnapshotBrand.docs;
-      for(final documentBrand in documentsBrands){
-        
-        modelsWithBrandName.add(ModelVehicleWithBrand.fromJson({
-          "brandName": (documentBrand.data() as dynamic)['name'],
-          "modelVehicle": documentModel.data()
-        }));
-        
-          
-      }
-    } 
-    _suggestionStreamControler.add(modelsWithBrandName);
-    
-  }
+  
 }
