@@ -65,7 +65,10 @@ class BrandVehicle {
 
   Future <int> getLastIdRow() async {
 
-    final QuerySnapshot<Map<String, dynamic>> brandsVehicle = await _firebaseFirestore.collection('brandsVehicle').get();
+    final QuerySnapshot<Map<String, dynamic>> brandsVehicle = await _firebaseFirestore
+      .collection('brandsVehicle')
+      .orderBy('id', descending:  false)
+      .get();
 
     if(brandsVehicle.docs.isEmpty){
       
