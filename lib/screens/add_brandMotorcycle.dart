@@ -10,14 +10,14 @@ import 'package:oilappadmin/services/brandVehicle.dart';
 import 'package:oilappadmin/widgets/customsimpledialogoption.dart';
 import 'package:oilappadmin/widgets/error_dialog.dart';
 
-class AddBrandVehicle extends StatefulWidget {
-  const AddBrandVehicle({super.key});
+class AddBrandMotorcycle extends StatefulWidget {
+  const AddBrandMotorcycle({super.key});
 
   @override
-  State<AddBrandVehicle> createState() => _AddBrandVehicleState();
+  State<AddBrandMotorcycle> createState() => _AddBrandMotorcycleState();
 }
 
-class _AddBrandVehicleState extends State<AddBrandVehicle> {
+class _AddBrandMotorcycleState extends State<AddBrandMotorcycle> {
 
   XFile? file;
   GlobalKey<FormState> _brandformkey = GlobalKey<FormState>();
@@ -55,7 +55,7 @@ class _AddBrandVehicleState extends State<AddBrandVehicle> {
               child: TextFormField(
                 controller: brandController,
                 decoration: const InputDecoration(
-                  hintText: "Agregar Marca del Vehiculo",
+                  hintText: "Agregar Marca de la Moto",
                 ),
               ),
             ),

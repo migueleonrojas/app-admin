@@ -1,13 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:uuid/uuid.dart';
 
-class BrandVehicle {
-  
+class BrandMotorcycle {
   FirebaseFirestore _firebaseFirestore = FirebaseFirestore.instance;
   Future <bool> validateNoDuplicateRows(String name, String slug) async {
 
     final QuerySnapshot<Map<String, dynamic>> result = await _firebaseFirestore
-      .collection("brandsVehicle")
+      .collection("brandsMotorcycle")
       .where(
         'name', isEqualTo: name
       )
@@ -18,27 +16,24 @@ class BrandVehicle {
     return result.docs.isNotEmpty;
   }
 
-  Future <bool> brandNameVehicleIsAssigned(String brand) async {
+  Future <bool> brandNameMotorcycleIsAssigned(String brand) async {
 
-    final QuerySnapshot<Map<String, dynamic>> resultVehicles = await _firebaseFirestore
+    final QuerySnapshot<Map<String, dynamic>> resultMotorcycles = await _firebaseFirestore
       .collection("vehicles")
       .where(
         'brand', isEqualTo: brand
       )
       .get();
 
-    return resultVehicles.docs.isNotEmpty;
+    return resultMotorcycles.docs.isNotEmpty;
 
   }
 
-  
-
-
-  void createBrandVehicle(int idBrand, String name, String slug, dynamic url) {
+  void createBrandMotorcycle(int idBrand, String name, String slug, dynamic url) {
     /* var id = Uuid();
     String brandId = id.v1(); */
     _firebaseFirestore
-        .collection("brandsVehicle")
+        .collection("brandsMotorcycle")
         .doc(idBrand.toString())
         .set({
           'id':  idBrand,
@@ -48,8 +43,8 @@ class BrandVehicle {
         });
   }
 
-  void updateBrandVehicle(String idBrand, String name, String slug, String newLogo) {
-    _firebaseFirestore.collection("brandsVehicle")
+  void updateBrandMotorcycle(String idBrand, String name, String slug, String newLogo) {
+    _firebaseFirestore.collection("brandsMotorcycle")
     .doc(idBrand).update({
       "name": name,
       "slug": slug,
@@ -58,38 +53,36 @@ class BrandVehicle {
   
   }
 
-  void deleteBrandVehicle(String idBrand){
-    _firebaseFirestore.collection("brandsVehicle")
+  void deleteBrandMotorcycle(String idBrand){
+    _firebaseFirestore.collection("brandsMotorcycle")
     .doc(idBrand).delete();
   }
 
   Future <int> getLastIdRow() async {
 
-    final QuerySnapshot<Map<String, dynamic>> brandsVehicle = await _firebaseFirestore
-      .collection('brandsVehicle')
+    final QuerySnapshot<Map<String, dynamic>> brandsMotorcycle = await _firebaseFirestore
+      .collection('brandsMotorcycle')
       .orderBy('id', descending:  false)
       .get();
 
-    if(brandsVehicle.docs.isEmpty){
+    if(brandsMotorcycle.docs.isEmpty){
       
       return 1;
     }
     else{
-      final lastId = brandsVehicle.docs.last.data()['id'] + 1;
+      final lastId = brandsMotorcycle.docs.last.data()['id'] + 1;
       return lastId;
     }
 
   }
 
-  
-
-  Future <List> getBrandsVehicle() async {
+  Future <List> getBrandsMotorcycle() async {
     
     List _allBrands = <Map<String, dynamic>>[];
     
-    final QuerySnapshot<Map<String, dynamic>> brandsVehicle = await _firebaseFirestore.collection('brandsVehicle').get();  
+    final QuerySnapshot<Map<String, dynamic>> brandsMotorcycle = await _firebaseFirestore.collection('brandsMotorcycle').get();  
     
-    for(final brand in brandsVehicle.docs) {
+    for(final brand in brandsMotorcycle.docs) {
       
       _allBrands.add(brand.data());
       
@@ -98,4 +91,5 @@ class BrandVehicle {
     return _allBrands;
      
   }
+
 }

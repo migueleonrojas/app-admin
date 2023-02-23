@@ -1,6 +1,7 @@
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:oilappadmin/Helper/custom_manage_button.dart';
 import 'package:oilappadmin/screens/add_carousel.dart';
+import 'package:oilappadmin/screens/add_motorcycle.dart';
 import 'package:oilappadmin/screens/add_product.dart';
 import 'package:oilappadmin/screens/add_service.dart';
 import 'package:oilappadmin/screens/add_vehicle.dart';
@@ -43,7 +44,7 @@ class _ManageState extends State<Manage> {
         children: [
           CustomManageButton(
             icon: Icons.add,
-            title: "Agregar Producto / Servicio / Vehiculo",
+            title: "Agregar Producto / Servicio / Vehiculo / Moto",
             onTap: () {
               showCupertinoModalPopup(
                 context: context,
@@ -107,7 +108,7 @@ class _ManageState extends State<Manage> {
                       CupertinoActionSheetAction(
                         isDefaultAction: true,
                         child: const Text(
-                          "Agregar Vehiculo",
+                          "Agregar Carro",
                           style: TextStyle(
                             color: Colors.deepOrangeAccent,
                           ),
@@ -126,6 +127,32 @@ class _ManageState extends State<Manage> {
                           }
     
                           Route route = MaterialPageRoute(builder: (c) => const AddVehicle());
+                          if(!mounted)return;
+                          Navigator.push(context, route);
+                        },
+                      ),
+                      CupertinoActionSheetAction(
+                        isDefaultAction: true,
+                        child: const Text(
+                          "Agregar Moto",
+                          style: TextStyle(
+                            color: Colors.deepOrangeAccent,
+                          ),
+                        ),
+                        onPressed: () async {
+                          var connectivityResult =
+                              await Connectivity().checkConnectivity();
+                          if (connectivityResult != ConnectivityResult.mobile &&
+                              connectivityResult != ConnectivityResult.wifi) {
+                            return showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return const NoInternetAlertDialog();
+                              },
+                            );
+                          }
+    
+                          Route route = MaterialPageRoute(builder: (c) => const AddMotorcycle());
                           if(!mounted)return;
                           Navigator.push(context, route);
                         },
