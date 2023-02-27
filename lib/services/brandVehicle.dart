@@ -1,9 +1,79 @@
+import 'dart:async';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:uuid/uuid.dart';
 
 class BrandVehicle {
   
   FirebaseFirestore _firebaseFirestore = FirebaseFirestore.instance;
+  bool dataFinish = false;
+
+
+  final StreamController <List<Map<String,dynamic>>> _suggestionStreamControlerBrandsVehicles = StreamController.broadcast();
+  Stream<List<Map<String,dynamic>>> get suggestionStreamBrandsVehicles => _suggestionStreamControlerBrandsVehicles.stream;
+  List<Map<String,dynamic>> brandsVehicles = [];
+  QuerySnapshot? collectionState;
+
+  Future <bool> getBrandsVehicleLimit({int limit = 5, bool nextDocument = false}) async {
+
+    QuerySnapshot<Map<String, dynamic>>? querySnapshotBrandsVehicle;
+
+    if(!nextDocument){
+      final collectionBrands = await FirebaseFirestore.instance
+      .collection('brandsVehicle')
+      .orderBy("name", descending: false)
+      .get();
+
+      if(collectionBrands.size < limit) {
+        limit = collectionBrands.size;
+      }
+
+      final collection = FirebaseFirestore.instance
+      .collection('brandsVehicle')
+      .limit(limit)
+      .orderBy("name", descending: false);
+
+      collection.get().then((values)  {
+        collectionState = values; 
+      });
+
+      querySnapshotBrandsVehicle = await collection.get();
+    }
+
+    else{
+      final lastVisible = collectionState!.docs[collectionState!.docs.length-1];
+
+      final collection = FirebaseFirestore.instance
+      .collection('brandsVehicle')
+      .limit(limit)
+      .orderBy("name", descending: false)
+      .startAfterDocument(lastVisible);
+
+      final collectionGet = await collection.get();
+
+      if(collectionGet.size == 0) {
+        dataFinish = true;
+        return dataFinish;
+      }
+
+      collection.get().then((values)  {
+        collectionState = values; 
+      });
+
+      querySnapshotBrandsVehicle = await collection.get();  
+    }
+
+    List<QueryDocumentSnapshot<Map<String,dynamic>>> documentsBrands = querySnapshotBrandsVehicle.docs;
+
+    for(final documentsBrand in documentsBrands) {
+      brandsVehicles.add(documentsBrand.data());
+    }
+
+    _suggestionStreamControlerBrandsVehicles.add(brandsVehicles);
+
+    return dataFinish;
+  }
+
   Future <bool> validateNoDuplicateRows(String name, String slug) async {
 
     final QuerySnapshot<Map<String, dynamic>> result = await _firebaseFirestore

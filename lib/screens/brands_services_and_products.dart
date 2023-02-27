@@ -30,10 +30,24 @@ class _BrandsServicesAndProductsState extends State<BrandsServicesAndProducts> {
         leading: IconButton(
           icon: const Icon(Icons.cancel_outlined),
           onPressed: () {
-            Navigator.pushReplacement(context,
-                          MaterialPageRoute(builder: (_) => MainScreen()));
+            Navigator.pop(context);
+            /* Route route = MaterialPageRoute(builder: (_) => MainScreen(indexTab: 1,));
+            Navigator.pushAndRemoveUntil(context, route, (route) => false); */
           },
         ),
+        actions: [
+          TextButton(
+            onPressed: ()  {
+              Route route = MaterialPageRoute(builder: (_) => MainScreen());
+              Navigator.pushAndRemoveUntil(context, route, (route) => false);
+            }, 
+            child: const Icon(
+              Icons.home,
+              size: 30,
+              color: Colors.black,
+            ), 
+          )
+        ],
       ),
       body: SingleChildScrollView(
         child: Column(

@@ -1,4 +1,5 @@
 import 'package:oilappadmin/model/carousel_model.dart';
+import 'package:oilappadmin/screens/main_screen.dart';
 import 'package:oilappadmin/services/carousel_service.dart';
 import 'package:oilappadmin/widgets/loading_widget.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -23,6 +24,19 @@ class _AllCarouselState extends State<AllCarousel> {
             Navigator.pop(context);
           },
         ),
+        actions: [
+          TextButton(
+            onPressed: ()  {
+              Route route = MaterialPageRoute(builder: (_) => MainScreen());
+              Navigator.pushAndRemoveUntil(context, route, (route) => false);
+            }, 
+            child: const Icon(
+              Icons.home,
+              size: 30,
+              color: Colors.black,
+            ), 
+          )
+        ],
       ),
       body: StreamBuilder<QuerySnapshot>(
           stream: FirebaseFirestore.instance

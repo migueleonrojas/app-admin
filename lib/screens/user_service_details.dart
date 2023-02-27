@@ -3,6 +3,7 @@ import 'package:oilappadmin/config/config.dart';
 import 'package:oilappadmin/model/addresss.dart';
 import 'package:oilappadmin/model/users_vehicles_model.dart';
 import 'package:oilappadmin/screens/editAddress.dart';
+import 'package:oilappadmin/screens/main_screen.dart';
 import 'package:oilappadmin/services/service_status.dart';
 import 'package:oilappadmin/widgets/loading_widget.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -48,6 +49,19 @@ class _UserServiceDetailsState extends State<UserServiceDetails> {
             Navigator.pop(context);
           },
         ),
+        actions: [
+          TextButton(
+            onPressed: ()  {
+              Route route = MaterialPageRoute(builder: (_) => MainScreen());
+              Navigator.pushAndRemoveUntil(context, route, (route) => false);
+            }, 
+            child: const Icon(
+              Icons.home,
+              size: 30,
+              color: Colors.black,
+            ), 
+          )
+        ],
       ),
       body: SingleChildScrollView(
         child: Container(

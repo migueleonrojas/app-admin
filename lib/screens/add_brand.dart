@@ -43,6 +43,11 @@ class _AddBrandState extends State<AddBrand> {
     widget.logoBrand = logo;
    });
   }
+  @override
+  void dispose() {
+    super.dispose();
+    scrollController.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {

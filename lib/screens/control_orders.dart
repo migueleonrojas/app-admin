@@ -1,5 +1,7 @@
 import 'package:oilappadmin/config/config.dart';
+import 'package:oilappadmin/screens/main_screen.dart';
 import 'package:oilappadmin/screens/user_order_details.dart';
+import 'package:oilappadmin/services/controls_order.dart';
 import 'package:oilappadmin/widgets/emptycardmessage.dart';
 import 'package:oilappadmin/widgets/loading_widget.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -14,8 +16,44 @@ class ControlOrders extends StatefulWidget {
 }
 
 class _ControlOrdersState extends State<ControlOrders> {
+  final ControlsOrdersService controlsOrdersService = ControlsOrdersService();
   final ScrollController scrollController = ScrollController();
+  int limit = 5;
+  bool dataFinish = false;
+  bool isLoading =  false;
+
+  @override
+  void initState() {
+    super.initState();
+    controlsOrdersService.getControlsOrders(limit: 5);
+    scrollController.addListener(() async {
+      
+      if(scrollController.position.pixels + 200 > scrollController.position.maxScrollExtent) {
+        if(isLoading) return;
+        if(dataFinish) return;
+        
+        isLoading = true;
+        await Future.delayed(const Duration(seconds: 1));
+        dataFinish = await controlsOrdersService.getControlsOrders(limit: limit, nextDocument: true);
+        isLoading = false;
+        
+        if(scrollController.position.pixels + 200 <= scrollController.position.maxScrollExtent) return;
+        scrollController.animateTo(
+          scrollController.position.maxScrollExtent + 120, 
+          duration: const Duration(milliseconds: 300), 
+          curve: Curves.fastOutSlowIn
+        );
+
+      }
+    });
+
+  }
   
+  @override
+  void dispose() {
+    scrollController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -29,150 +67,140 @@ class _ControlOrdersState extends State<ControlOrders> {
             Navigator.pop(context);
           },
         ),
-        /* actions: [
-           IconButton(
-            icon: Image.asset(
-              "assets/authenticaiton/service.png",
-              color: Colors.white,
-            ),
-            onPressed: () {
-              Navigator.push(context,
-                  MaterialPageRoute(builder: (_) => ServiceOrders()));
-            },
-          ),
-          SizedBox(width: 10),
-        ], */
+        actions: [
+          TextButton(
+            onPressed: ()  {
+              Route route = MaterialPageRoute(builder: (_) => MainScreen());
+              Navigator.pushAndRemoveUntil(context, route, (route) => false);
+            }, 
+            child: const Icon(
+              Icons.home,
+              size: 30,
+              color: Colors.black,
+            ), 
+          )
+        ],
       ),
+      body: SingleChildScrollView(
+        physics: const BouncingScrollPhysics(),
+        controller: scrollController,
+        scrollDirection: Axis.vertical,
+        child: Column(
+          children: [
+            StreamBuilder(
+              
+              stream: controlsOrdersService.suggestionStreamControlOrders,
+              builder: ((context, snapshot) {
+                if (!snapshot.hasData) {
+                  return circularProgress();
+                }
 
-      body: FutureBuilder(
-        future: getControlOrders(),
-        builder: (context, snapshot) {
-          if (!snapshot.hasData) {
-            return circularProgress();
-          }
+                if (snapshot.data!.isEmpty) {
+                  return const EmptyCardMessage(
+                    listTitle: 'No hay Ordenes actualmente',
+                    message: 'No hay Ordenes por lo momentos',
+                  );
+                }
 
-          if(snapshot.data!.isEmpty) {
-            return const EmptyCardMessage(
-              listTitle: 'No hay pedidos',
-              message: 'No hay pedidos actualmente',
-            );
-          }
-          return ListView.builder(
-            physics: const BouncingScrollPhysics(),
-            controller: scrollController,
-            itemCount: snapshot.data!.length,
-            itemBuilder: (context, index)  {
-              DateTime myDateTime = (snapshot.data as dynamic)[index]['orderTime'].toDate();
-              return Card(
-                elevation: 2,
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Column(
-                    children: [
-                      RichText(
-                        text: TextSpan(
+                return ListView.builder(
+                  physics: const BouncingScrollPhysics(),
+                  shrinkWrap: true,
+                  itemCount: snapshot.data!.length,
+                  itemBuilder: (context, index)  {
+                    DateTime myDateTime = (snapshot.data as dynamic)[index]['orderTime'].toDate();
+                    return Card(
+                      elevation: 2,
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Column(
                           children: [
-                            const TextSpan(
-                              text: "ID de la Orden: ",
-                              style: TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.w600,
-                                color: Colors.deepOrangeAccent,
+                            RichText(
+                              text: TextSpan(
+                                children: [
+                                  const TextSpan(
+                                    text: "ID de la Orden: ",
+                                    style: TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.w600,
+                                      color: Colors.deepOrangeAccent,
+                                    ),
+                                  ),
+                                  TextSpan(
+                                    text: (snapshot.data as dynamic)[index]['orderId'],
+                                    style: const TextStyle(
+                                      color: Colors.black,
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
-                            TextSpan(
-                              text: (snapshot.data as dynamic)[index]['orderId'],
-                              style: const TextStyle(
-                                color: Colors.black,
-                                fontSize: 18,
-                                fontWeight: FontWeight.w600,
+                            ((snapshot.data as dynamic)[index][AutoParts.productID].length > 1) 
+                              ?Text(
+                                "(" + ((snapshot.data as dynamic)[index][AutoParts.productID].length -1).toString() +" elemento)",
+                                style: const TextStyle(
+                                color: Colors.grey,
+                                  fontSize: 16,
+                                ),
+                              )
+                              :Text(
+                                "(" +((snapshot.data as dynamic)[index][AutoParts.productID].length -1).toString() +" elemento)",
+                                style: const TextStyle(
+                                  color: Colors.grey,
+                                  fontSize: 16,
+                                ),
                               ),
-                            ),
+                              Text(
+                                "Precio Total: " + (snapshot.data as dynamic)[index]['totalPrice'].toString() +" \$",
+                                style: const TextStyle(
+                                  color: Colors.black,
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                              Text(
+                                DateFormat.yMMMd().add_jm().format(myDateTime),
+                              ),
+                              Text(timeago.format(DateTime.tryParse((snapshot.data as dynamic)[index]['orderTime'].toDate().toString())!).toString()),
+                              ElevatedButton(
+                                /* shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8),
+                                ), */
+                                onPressed: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (_) => UserOrderDetails(
+                                        orderId: (snapshot.data as dynamic)[index]['orderId'],
+                                        addressId: (snapshot.data as dynamic)[index]['addressID'],
+                                      ),
+                                    ),
+                                  );
+                                },
+                                /* color: Colors.deepOrangeAccent[200], */
+                                child: const Text(
+                                  "Detalle de la Orden",
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                  ),
+                                ),
+                              ),
                           ],
                         ),
                       ),
-                      ((snapshot.data as dynamic)[index][AutoParts.productID].length > 1) 
-                        ?Text(
-                          "(" + ((snapshot.data as dynamic)[index][AutoParts.productID].length -1).toString() +" elemento)",
-                          style: const TextStyle(
-                          color: Colors.grey,
-                            fontSize: 16,
-                          ),
-                        )
-                        :Text(
-                          "(" +((snapshot.data as dynamic)[index][AutoParts.productID].length -1).toString() +" elemento)",
-                          style: const TextStyle(
-                            color: Colors.grey,
-                            fontSize: 16,
-                          ),
-                        ),
-                        Text(
-                          "Precio Total: " + (snapshot.data as dynamic)[index]['totalPrice'].toString() +" \$",
-                          style: const TextStyle(
-                            color: Colors.black,
-                            fontSize: 18,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                        Text(
-                          DateFormat.yMMMd().add_jm().format(myDateTime),
-                        ),
-                        Text(timeago.format(DateTime.tryParse((snapshot.data as dynamic)[index]['orderTime'].toDate().toString())!).toString()),
-                        ElevatedButton(
-                          /* shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          ), */
-                          onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (_) => UserOrderDetails(
-                                  orderId: (snapshot.data as dynamic)[index]['orderId'],
-                                  addressId: (snapshot.data as dynamic)[index]['addressID'],
-                                ),
-                              ),
-                            );
-                          },
-                          /* color: Colors.deepOrangeAccent[200], */
-                          child: const Text(
-                            "Detalle de la Orden",
-                            style: TextStyle(
-                              color: Colors.white,
-                            ),
-                          ),
-                        ),
-                    ],
-                  ),
-                ),
-              );
+                    );
 
-            }
-          );
-
-        },
+                  }
+                );
+              }),
+            )
+          ],
+        ),
       ),
+      
       
     );
   }
-
-
-    Future <List<Map<String,dynamic>>> getControlOrders() async {
-
-      List <Map<String,dynamic>> listControlOrders = [];
-
-      QuerySnapshot<Map<String, dynamic>> controlOrders = await AutoParts.firestore!
-      .collection("orders")
-      .orderBy("orderTime", descending: true)
-      .get();
-
-      for(final controlOrder in controlOrders.docs) {
-
-        listControlOrders.add(controlOrder.data());
-
-      }
-
-      return listControlOrders;
-
-    }
   
 }

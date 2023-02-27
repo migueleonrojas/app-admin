@@ -13,6 +13,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:oilappadmin/screens/edit_vehicle.dart';
 import 'package:oilappadmin/screens/main_screen.dart';
+import 'package:oilappadmin/widgets/emptycardmessage.dart';
+import 'package:oilappadmin/widgets/loading_widget.dart';
 import 'package:rxdart/rxdart.dart';
 
 import '../services/modelVehicle.dart';
@@ -23,13 +25,38 @@ class ModelsVehicles extends StatefulWidget {
 }
 
 class _ModelsVehiclesState extends State<ModelsVehicles> {
-
+  final ScrollController scrollController = ScrollController();
   ModelVehicle modelVehicle = ModelVehicle();
-
+  int limit = 10;
+  bool dataFinish = false;
+  bool isLoading =  false;
   @override
   void initState() {
     super.initState();
-    modelVehicle.getModelsVehicle();
+    modelVehicle.getModelsVehicle(limit: limit);
+    scrollController.addListener(() async {
+      if(scrollController.position.pixels + 200 > scrollController.position.maxScrollExtent) {
+        if(isLoading) return;
+        if(dataFinish) return;
+
+        isLoading = true;
+        await Future.delayed(const Duration(seconds: 1));
+        dataFinish = await modelVehicle.getModelsVehicle(limit: 5, nextDocument: true);
+        isLoading = false;
+        if(scrollController.position.pixels + 200 <= scrollController.position.maxScrollExtent) return;
+        scrollController.animateTo(
+          scrollController.position.maxScrollExtent + 120, 
+          duration: const Duration(milliseconds: 300), 
+          curve: Curves.bounceOut
+        );
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    scrollController.dispose();
+    super.dispose();
   }
 
   @override
@@ -42,18 +69,44 @@ class _ModelsVehiclesState extends State<ModelsVehicles> {
           icon: const Icon(Icons.cancel_outlined),
           onPressed: () {
             Navigator.pushReplacement(context,
-                          MaterialPageRoute(builder: (_) => MainScreen()));
+                          MaterialPageRoute(builder: (_) => MainScreen(indexTab: 1,)));
           },
         ),
+        actions: [
+          TextButton(
+            onPressed: ()  {
+              Route route = MaterialPageRoute(builder: (_) => MainScreen());
+              Navigator.pushAndRemoveUntil(context, route, (route) => false);
+            }, 
+            child: const Icon(
+              Icons.home,
+              size: 30,
+              color: Colors.black,
+            ), 
+          )
+        ],
       ),
       body: SingleChildScrollView(
+        controller: scrollController,
         child: Column(
           children: [
             StreamBuilder(
               stream: modelVehicle.suggestionStream,
-              builder: (context, snapshotModel) {
+              builder: (context, snapshot) {
 
-                if (snapshotModel.data == null) return Text('');
+                if (!snapshot.hasData) {
+                  return circularProgress();
+                }
+                
+
+                if(snapshot.data!.isEmpty) {
+
+                  return const EmptyCardMessage(
+                    listTitle: 'No tiene Modelos',
+                    message: 'No hay Modelos de Vehiculos',
+                  );
+
+                }
                 
                 return Padding(
                   padding: const EdgeInsets.all(8.0),
@@ -68,11 +121,11 @@ class _ModelsVehiclesState extends State<ModelsVehicles> {
                           new StaggeredTile.fit(2),
                       mainAxisSpacing: 5.0,
                       crossAxisSpacing: 5.0,
-                      itemCount: snapshotModel.data!.length,
+                      itemCount: snapshot.data!.length,
                       itemBuilder: (BuildContext context, int index)   {
 
-                        if (snapshotModel.data == null) return Text('');
-                        final modelWithBrandName = snapshotModel.data!;
+                        
+                        final modelWithBrandName = snapshot.data!;
                 
                         ModelVehicleWithBrand modelVehicleWithBrand = ModelVehicleWithBrand.fromJson(
                           modelWithBrandName[index].toJson()
@@ -95,6 +148,7 @@ class _ModelsVehiclesState extends State<ModelsVehicles> {
                             
                           },
                           child: Card(
+
                             elevation: 2,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(10),
@@ -105,14 +159,16 @@ class _ModelsVehiclesState extends State<ModelsVehicles> {
                                 const SizedBox(height: 5),
                                 
                                 Padding(
-                                  padding: const EdgeInsets.all(8.0),
+                                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 60),
                                   child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
+                                    crossAxisAlignment: CrossAxisAlignment.center,
+                                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                      
                                     children: [
                                       Text(modelVehicleWithBrand.brandName!),
+                                      
                                       Text(
-                                        modelVehicleModel.name!,
+                                        modelVehicleModel.name.toString(),
                                         maxLines: 1,
                                         overflow: TextOverflow.ellipsis,
                                         style: const TextStyle(

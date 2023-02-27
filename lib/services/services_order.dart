@@ -5,11 +5,13 @@ import 'package:oilappadmin/model/service_order_with_vehicles_model.dart';
 
 class ServiceOrdersService {
 
-  final StreamController <List<ServiceOrderWithVehicle>> _suggestionStreamControler = StreamController.broadcast();
-  Stream<List<ServiceOrderWithVehicle>> get suggestionStream => _suggestionStreamControler.stream;
+  final StreamController <List<ServiceOrderWithVehicle>> _suggestionStreamControlerServiceOrder = StreamController.broadcast();
+  Stream<List<ServiceOrderWithVehicle>> get suggestionStreamServiceOrder => _suggestionStreamControlerServiceOrder.stream;
   List<ServiceOrderWithVehicle> serviceOrderWithVehicle = [];
   QuerySnapshot? collectionState;
   bool dataFinish = false;
+
+  
   Future <bool>  getServiceOrderWithVehicle({int limit = 5, bool nextDocument = false}) async {
 
     QuerySnapshot<Map<String, dynamic>>? querySnapshotServiceOrder;
@@ -78,7 +80,7 @@ class ServiceOrdersService {
 
       }
     }
-    _suggestionStreamControler.add(serviceOrderWithVehicle);
+    _suggestionStreamControlerServiceOrder.add(serviceOrderWithVehicle);
     return dataFinish;
   }
 

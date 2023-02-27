@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:oilappadmin/Helper/custom_manage_button.dart';
+import 'package:oilappadmin/screens/main_screen.dart';
 import 'package:oilappadmin/services/brandVehicle.dart';
 import 'package:oilappadmin/services/colorVehicle.dart';
 import 'package:oilappadmin/services/modelVehicle.dart';
@@ -49,7 +50,7 @@ class _AddVehicleState extends State<AddVehicle> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Agregar Vehiculo"),
+        title: const Text("Agregar Carro"),
         centerTitle: true,
         leading: IconButton(
           icon: const Icon(Icons.cancel_outlined),
@@ -57,6 +58,19 @@ class _AddVehicleState extends State<AddVehicle> {
             Navigator.pop(context);
           },
         ),
+        actions: [
+          TextButton(
+            onPressed: ()  {
+              Route route = MaterialPageRoute(builder: (_) => MainScreen());
+              Navigator.pushAndRemoveUntil(context, route, (route) => false);
+            }, 
+            child: const Icon(
+              Icons.home,
+              size: 30,
+              color: Colors.black,
+            ), 
+          )
+        ],
       ),
       body: Column(
         children: [

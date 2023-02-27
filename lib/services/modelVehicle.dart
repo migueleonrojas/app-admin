@@ -5,15 +5,100 @@ import 'package:oilappadmin/model/model_vehicle_with_brand.dart';
 import 'package:uuid/uuid.dart';
 
 class ModelVehicle {
+  
   FirebaseFirestore _firebaseFirestore = FirebaseFirestore.instance;
-
+  bool dataFinish = false;
   final StreamController <List<ModelVehicleWithBrand>> _suggestionStreamControler = StreamController.broadcast();
   Stream<List<ModelVehicleWithBrand>> get suggestionStream => _suggestionStreamControler.stream;
+  List<ModelVehicleWithBrand> modelsWithBrandName = [];
+  QuerySnapshot? collectionState;
 
+  Future <bool> getModelsVehicle({int limit = 5, bool nextDocument = false}) async {
 
-  getModelsVehicle() async {
-    List<ModelVehicleWithBrand> modelsWithBrandName = [];
-    QuerySnapshot<Map<String, dynamic>> querySnapshotModel = await FirebaseFirestore.instance
+    QuerySnapshot<Map<String, dynamic>>? querySnapshotModel;
+
+    if(!nextDocument){
+      final collectionModels = await FirebaseFirestore.instance
+      .collection('modelsVehicle')
+      .orderBy("name", descending: false)
+      .get();
+
+      if(collectionModels.size < limit) {
+        limit = collectionModels.size;
+      }
+
+      final collection = FirebaseFirestore.instance
+      .collection('modelsVehicle')
+      .limit(limit)
+      .orderBy("name", descending: false);
+
+      collection.get().then((values)  {
+        collectionState = values; 
+      });
+
+      querySnapshotModel = await collection.get();
+    }
+
+    else{
+      final lastVisible = collectionState!.docs[collectionState!.docs.length-1];
+
+      final collection = FirebaseFirestore.instance
+      .collection('modelsVehicle')
+      .limit(limit)
+      .orderBy("name", descending: false)
+      .startAfterDocument(lastVisible);
+
+      final collectionGet = await collection.get();
+
+      if(collectionGet.size == 0) {
+        dataFinish = true;
+        return dataFinish;
+      }
+
+      collection.get().then((values)  {
+        collectionState = values; 
+      });
+
+      querySnapshotModel = await collection.get();  
+    }
+
+    List<QueryDocumentSnapshot<Map<String,dynamic>>> documentsModels = querySnapshotModel.docs;
+
+    QuerySnapshot<Map<String, dynamic>> querySnapshotBrands = await FirebaseFirestore.instance
+        .collection('brandsVehicle')
+        .get();
+    List<Map<String, dynamic>> querySnapshotBrandsFiltered = [];
+    List<Map<String,dynamic>> documentsBrands = querySnapshotBrandsFiltered;  
+
+    
+
+    for(final documentModel in documentsModels) {
+      
+      
+      for(final querySnapshotBrand in querySnapshotBrands.docs) {
+        if(documentModel.data()['id_brand'] == querySnapshotBrand.data()['id']){
+        
+          querySnapshotBrandsFiltered.add(querySnapshotBrand.data());
+        }
+      }
+      
+      
+      for(final documentBrand in querySnapshotBrandsFiltered){
+
+       
+        modelsWithBrandName.add(ModelVehicleWithBrand.fromJson({
+          "brandName": (documentBrand as dynamic)['name'],
+          "modelVehicle": documentModel.data()
+        }));
+        
+          
+      }
+    } 
+    _suggestionStreamControler.add(modelsWithBrandName);
+    
+    return dataFinish;
+
+    /* QuerySnapshot<Map<String, dynamic>> querySnapshotModel = await FirebaseFirestore.instance
       .collection('modelsVehicle').get();
 
     List<QueryDocumentSnapshot<Map<String,dynamic>>> documentsModels = querySnapshotModel.docs;
@@ -23,7 +108,7 @@ class ModelVehicle {
       QuerySnapshot<Map<String, dynamic>> querySnapshotBrand = await FirebaseFirestore.instance.collection('brandsVehicle').where('id', isEqualTo: (documentModel.data() as dynamic)['id_brand']).get();
       List<QueryDocumentSnapshot<Map<String,dynamic>>> documentsBrands = querySnapshotBrand.docs;
       for(final documentBrand in documentsBrands){
-        
+       
         modelsWithBrandName.add(ModelVehicleWithBrand.fromJson({
           "brandName": (documentBrand.data() as dynamic)['name'],
           "modelVehicle": documentModel.data()
@@ -34,6 +119,8 @@ class ModelVehicle {
     } 
     _suggestionStreamControler.add(modelsWithBrandName);
     
+    return dataFinish; */
+
   }
 
 

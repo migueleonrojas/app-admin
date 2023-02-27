@@ -7,6 +7,7 @@ import 'package:oilappadmin/model/vehicle_model.dart';
 import 'package:oilappadmin/screens/add_brand.dart';
 import 'package:oilappadmin/screens/add_model.dart';
 import 'package:oilappadmin/screens/add_year.dart';
+import 'package:oilappadmin/screens/main_screen.dart';
 import 'package:oilappadmin/screens/services.dart';
 import 'package:oilappadmin/screens/products.dart';
 import 'package:oilappadmin/screens/vehicles.dart';
@@ -78,6 +79,19 @@ class _EditVehicleState extends State<EditVehicle> {
             Navigator.pop(context);
           },
         ),
+        actions: [
+          TextButton(
+            onPressed: ()  {
+              Route route = MaterialPageRoute(builder: (_) => MainScreen());
+              Navigator.pushAndRemoveUntil(context, route, (route) => false);
+            }, 
+            child: const Icon(
+              Icons.home,
+              size: 30,
+              color: Colors.black,
+            ), 
+          )
+        ],
       ),
       body: SingleChildScrollView(
         child: Column(

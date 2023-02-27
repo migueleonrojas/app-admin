@@ -30,10 +30,22 @@ class _YearsVehiclesState extends State<YearsVehicles> {
         leading: IconButton(
           icon: const Icon(Icons.cancel_outlined),
           onPressed: () {
-            Navigator.pushReplacement(context,
-                          MaterialPageRoute(builder: (_) => MainScreen()));
+            Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => MainScreen(indexTab: 1)));
           },
         ),
+        actions: [
+          TextButton(
+            onPressed: ()  {
+              Route route = MaterialPageRoute(builder: (_) => MainScreen());
+              Navigator.pushAndRemoveUntil(context, route, (route) => false);
+            }, 
+            child: const Icon(
+              Icons.home,
+              size: 30,
+              color: Colors.black,
+            ), 
+          )
+        ],
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -41,6 +53,7 @@ class _YearsVehiclesState extends State<YearsVehicles> {
             StreamBuilder<QuerySnapshot>(
               stream: FirebaseFirestore.instance
                   .collection('yearsVehicle')
+                  .orderBy('year', descending: true)
                   .snapshots(),
               builder: (context, snapshot) {
                 if (snapshot.data == null) return Text('');

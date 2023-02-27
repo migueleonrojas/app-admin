@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:oilappadmin/screens/all_carousel.dart';
+import 'package:oilappadmin/screens/main_screen.dart';
 import 'package:oilappadmin/services/carousel_service.dart';
 import 'package:oilappadmin/widgets/customsimpledialogoption.dart';
 import 'package:oilappadmin/widgets/error_dialog.dart';
@@ -30,6 +31,19 @@ class _AddCarouselState extends State<AddCarousel> {
             Navigator.pop(context);
           },
         ),
+        actions: [
+          TextButton(
+            onPressed: ()  {
+              Route route = MaterialPageRoute(builder: (_) => MainScreen());
+              Navigator.pushAndRemoveUntil(context, route, (route) => false);
+            }, 
+            child: const Icon(
+              Icons.home,
+              size: 30,
+              color: Colors.black,
+            ), 
+          )
+        ],
       ),
       body: Padding(
         padding: const EdgeInsets.all(12.0),

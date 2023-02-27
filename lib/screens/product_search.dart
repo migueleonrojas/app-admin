@@ -3,6 +3,7 @@ import 'package:oilappadmin/screens/edit_product.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
+import 'package:oilappadmin/screens/main_screen.dart';
 
 class ProductSearch extends StatefulWidget {
   @override
@@ -118,6 +119,17 @@ class _ProductSearchState extends State<ProductSearch> {
               searchProductController.text = "";
             },
           ),
+          TextButton(
+            onPressed: ()  {
+              Route route = MaterialPageRoute(builder: (_) => MainScreen());
+              Navigator.pushAndRemoveUntil(context, route, (route) => false);
+            }, 
+            child: const Icon(
+              Icons.home,
+              size: 30,
+              color: Colors.black,
+            ), 
+          )
         ],
       ),
       body: SingleChildScrollView(

@@ -32,10 +32,24 @@ class _CategoriesServicesAndProductsState extends State<CategoriesServicesAndPro
         leading: IconButton(
           icon: const Icon(Icons.cancel_outlined),
           onPressed: () {
-            Navigator.pushReplacement(context,
-                          MaterialPageRoute(builder: (_) => MainScreen()));
+            Navigator.pop(context);
+            /* Navigator.pushReplacement(context,
+                          MaterialPageRoute(builder: (_) => MainScreen(indexTab: 1,))); */
           },
         ),
+        actions: [
+          TextButton(
+            onPressed: ()  {
+              Route route = MaterialPageRoute(builder: (_) => MainScreen());
+              Navigator.pushAndRemoveUntil(context, route, (route) => false);
+            }, 
+            child: const Icon(
+              Icons.home,
+              size: 30,
+              color: Colors.black,
+            ), 
+          )
+        ],
       ),
       body: SingleChildScrollView(
         child: Column(

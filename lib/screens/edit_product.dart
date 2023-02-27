@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:oilappadmin/model/product_model.dart';
+import 'package:oilappadmin/screens/main_screen.dart';
 import 'package:oilappadmin/screens/products.dart';
 import 'package:oilappadmin/widgets/customsimpledialogoption.dart';
 import 'package:oilappadmin/widgets/error_dialog.dart';
@@ -58,6 +59,19 @@ class _EditProductState extends State<EditProduct> {
             Navigator.pop(context);
           },
         ),
+        actions: [
+          TextButton(
+            onPressed: ()  {
+              Route route = MaterialPageRoute(builder: (_) => MainScreen());
+              Navigator.pushAndRemoveUntil(context, route, (route) => false);
+            }, 
+            child: const Icon(
+              Icons.home,
+              size: 30,
+              color: Colors.black,
+            ), 
+          )
+        ],
       ),
       body: SingleChildScrollView(
         child: Column(

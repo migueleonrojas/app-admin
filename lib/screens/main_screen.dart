@@ -5,6 +5,9 @@ import 'package:oilappadmin/screens/splash_screen.dart';
 import 'package:flutter/material.dart';
 
 class MainScreen extends StatefulWidget {
+  final int? indexTab;
+  MainScreen({this.indexTab});
+
   @override
   _MainScreenState createState() => _MainScreenState();
 }
@@ -17,6 +20,7 @@ class _MainScreenState extends State<MainScreen>
   @override
   void initState() {
     _tabController = TabController(length: 2, vsync: this);
+    _tabController!.index =  widget.indexTab ?? 0;
     _scrollController = ScrollController();
     super.initState();
   }

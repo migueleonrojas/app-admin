@@ -32,6 +32,13 @@ class _AddModelState extends State<AddModel> {
     widget.previousModelName = (widget.modelName == null)? "": widget.modelName!;
     widget.previousModelId = (widget.brandId == null)? 0: widget.brandId!;
   }
+
+  @override
+  void dispose() {
+    scrollController.dispose();
+    super.dispose();
+  }
+
   void changeIndex(int index, String brandNameSnapshot) {
    setState(() {
     widget.selectedIndex = index;

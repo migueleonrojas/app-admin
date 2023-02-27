@@ -30,6 +30,12 @@ class _AddYearState extends State<AddYear> {
     widget.previousSelectedIndex = (widget.selectedIndex == null) ? 0: widget.selectedIndex!;
     widget.previousYear = (widget.year == null)? 0: widget.year!;
   }
+
+  @override
+  void dispose() {
+    scrollController.dispose();
+    super.dispose();
+  }
   void changeIndex(int index, int yry) {
    setState(() {
     widget.selectedIndex = index;

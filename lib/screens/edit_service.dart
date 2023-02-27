@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:oilappadmin/model/service_model.dart';
+import 'package:oilappadmin/screens/main_screen.dart';
 import 'package:oilappadmin/screens/services.dart';
 import 'package:oilappadmin/screens/products.dart';
 import 'package:oilappadmin/widgets/customsimpledialogoption.dart';
@@ -58,6 +59,19 @@ class _EditServiceState extends State<EditService> {
             Navigator.pop(context);
           },
         ),
+        actions: [
+          TextButton(
+            onPressed: ()  {
+              Route route = MaterialPageRoute(builder: (_) => MainScreen());
+              Navigator.pushAndRemoveUntil(context, route, (route) => false);
+            }, 
+            child: const Icon(
+              Icons.home,
+              size: 30,
+              color: Colors.black,
+            ), 
+          )
+        ],
       ),
       body: SingleChildScrollView(
         child: Column(

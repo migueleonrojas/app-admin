@@ -2,6 +2,7 @@ import 'package:oilappadmin/config/config.dart';
 import 'package:oilappadmin/model/service_order_model.dart';
 import 'package:oilappadmin/model/service_order_with_vehicles_model.dart';
 import 'package:oilappadmin/model/users_vehicles_model.dart';
+import 'package:oilappadmin/screens/main_screen.dart';
 import 'package:oilappadmin/screens/user_service_details.dart';
 import 'package:oilappadmin/services/services_order.dart';
 import 'package:oilappadmin/widgets/emptycardmessage.dart';
@@ -48,6 +49,13 @@ class _ServiceOrdersState extends State<ServiceOrders> {
       }
     });
   }
+
+  @override
+  void dispose() {
+    scrollController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -60,6 +68,19 @@ class _ServiceOrdersState extends State<ServiceOrders> {
             Navigator.pop(context);
           },
         ),
+        actions: [
+          TextButton(
+            onPressed: ()  {
+              Route route = MaterialPageRoute(builder: (_) => MainScreen());
+              Navigator.pushAndRemoveUntil(context, route, (route) => false);
+            }, 
+            child: const Icon(
+              Icons.home,
+              size: 30,
+              color: Colors.black,
+            ), 
+          )
+        ],
       ),
       body: SingleChildScrollView(
         physics: const BouncingScrollPhysics(),
@@ -68,7 +89,7 @@ class _ServiceOrdersState extends State<ServiceOrders> {
         child: Column(
           children: [
             StreamBuilder(
-              stream: serviceOrdersService.suggestionStream,
+              stream: serviceOrdersService.suggestionStreamServiceOrder,
               builder: ((context, snapshot) {
                 if (!snapshot.hasData) {
                   return circularProgress();

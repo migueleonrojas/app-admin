@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:oilappadmin/model/product_model.dart';
+import 'package:oilappadmin/screens/main_screen.dart';
 import 'package:oilappadmin/widgets/customsimpledialogoption.dart';
 import 'package:oilappadmin/widgets/error_dialog.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -164,6 +165,17 @@ class _AddServiceState extends State<AddService> {
               }
             },
           ),
+          TextButton(
+            onPressed: ()  {
+              Route route = MaterialPageRoute(builder: (_) => MainScreen());
+              Navigator.pushAndRemoveUntil(context, route, (route) => false);
+            }, 
+            child: const Icon(
+              Icons.home,
+              size: 30,
+              color: Colors.black,
+            ), 
+          )
         ],
       ),
       body: SingleChildScrollView(

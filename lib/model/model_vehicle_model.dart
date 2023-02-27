@@ -5,8 +5,8 @@ class ModelVehicleModel {
   int? id;
   int? id_brand;
   String? logo;
-  String? name;
-  String? slug;
+  dynamic name;
+  dynamic? slug;
   
   ModelVehicleModel({
     this.id,
