@@ -4,7 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:oilappadmin/model/model_vehicle_with_brand.dart';
 import 'package:uuid/uuid.dart';
 
-class ModelVehicle {
+class ModelVehicleService {
   
   FirebaseFirestore _firebaseFirestore = FirebaseFirestore.instance;
   bool dataFinish = false;

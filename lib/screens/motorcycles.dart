@@ -1,25 +1,26 @@
+import 'package:oilappadmin/Helper/dashboard.dart';
+import 'package:oilappadmin/Helper/manage.dart';
+import 'package:oilappadmin/config/config.dart';
 import 'package:oilappadmin/model/service_model.dart';
-import 'package:oilappadmin/model/user_model.dart';
+import 'package:oilappadmin/model/vehicle_model.dart';
+import 'package:oilappadmin/screens/edit_motorcycle.dart';
 import 'package:oilappadmin/screens/edit_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
-import 'package:oilappadmin/screens/edit_user.dart';
+import 'package:oilappadmin/screens/edit_vehicle.dart';
 import 'package:oilappadmin/screens/main_screen.dart';
-import 'package:oilappadmin/screens/product_search.dart';
-import 'package:oilappadmin/screens/user_search.dart';
-import 'package:oilappadmin/services/users_services.dart';
+import 'package:oilappadmin/services/vehicles_service.dart';
 import 'package:oilappadmin/widgets/emptycardmessage.dart';
 import 'package:oilappadmin/widgets/loading_widget.dart';
 
-class Users extends StatefulWidget {
+class Motorcycles extends StatefulWidget {
   @override
-  _UsersState createState() => _UsersState();
+  _MotorcyclesState createState() => _MotorcyclesState();
 }
 
-class _UsersState extends State<Users> {
-
-  final UsersService usersService = UsersService();
+class _MotorcyclesState extends State<Motorcycles> {
+  final VehiclesService vehiclesService = VehiclesService();
   final ScrollController scrollController = ScrollController();
   int limit = 5;
   bool dataFinish = false;
@@ -28,7 +29,7 @@ class _UsersState extends State<Users> {
   @override
   void initState() {
     super.initState();
-    usersService.getUsers(limit: 10);
+    vehiclesService.getVehicles(limit: 10, typeOfVehicle: 'motorcycle');
     scrollController.addListener(() async {
       
       if(scrollController.position.pixels + 200 > scrollController.position.maxScrollExtent) {
@@ -37,7 +38,7 @@ class _UsersState extends State<Users> {
         
         isLoading = true;
         await Future.delayed(const Duration(seconds: 1));
-        dataFinish = await usersService.getUsers(limit: limit, nextDocument: true);
+        dataFinish = await vehiclesService.getVehicles(limit: limit, nextDocument: true, typeOfVehicle: 'motorcycle');
         isLoading = false;
         
         if(scrollController.position.pixels + 200 <= scrollController.position.maxScrollExtent) return;
@@ -57,18 +58,18 @@ class _UsersState extends State<Users> {
     super.dispose();
   }
 
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Todos los Usuarios"),
+        title: const Text("Todas las Motos"),
         centerTitle: true,
         leading: IconButton(
           icon: const Icon(Icons.cancel_outlined),
           onPressed: () {
-            Navigator.pushReplacement(context,
-                          MaterialPageRoute(builder: (_) => MainScreen()));
+            Navigator.pop(context);
+            /* Navigator.pushReplacement(context,
+                          MaterialPageRoute(builder: (_) => MainScreen(indexTab: 1,))); */
           },
         ),
         actions: [
@@ -82,62 +83,80 @@ class _UsersState extends State<Users> {
               size: 30,
               color: Colors.black,
             ), 
-          ),
-          IconButton(
-            icon: const Icon(
-              Icons.search_outlined,
-            ),
-            onPressed: () {
-              Route route = MaterialPageRoute(builder: (_) => UserSearch());
-              Navigator.push(context, route);
-            },
-          ),
+          )
         ],
       ),
       body: SingleChildScrollView(
+        controller: scrollController,
         child: Column(
           children: [
             StreamBuilder(
-              stream: usersService.suggestionStreamUsers,
+              stream: vehiclesService.suggestionStreamVehicles,
+              /* stream: AutoParts.firestore!
+              .collection('usersVehicles')
+              .snapshots(), */
+          
+              /* stream: FirebaseFirestore.instance
+                  .collection('vehicles')
+                  .orderBy("registrationDate", descending: true)
+                  .snapshots(), */
               builder: (context, snapshot) {
-                
                 if (!snapshot.hasData) {
                   return circularProgress();
                 }
 
                 if (snapshot.data!.isEmpty) {
                   return const EmptyCardMessage(
-                    listTitle: 'No hay usuarios actualmente',
-                    message: 'No hay usuarios por lo momentos',
+                    listTitle: 'No hay vehiculos actualmente',
+                    message: 'No hay vehiculos por lo momentos',
                   );
                 }
-
-
+                else if(snapshot.data!.isEmpty) {
+                  return Container(
+                    width: MediaQuery.of(context).size.width,
+                    height: MediaQuery.of(context).size.height - AppBar().preferredSize.height,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Container(
+                          color: Colors.blueGrey.shade300,
+                          width: MediaQuery.of(context).size.width,
+                          height: MediaQuery.of(context).size.height * 0.5,
+                          child: const Center(
+                            child: Text(
+                              'No hay vehiculos registrados', 
+                              style:TextStyle(color: Colors.white, fontSize: 18, fontFamily: "Brand-Bold",),
+                            ),
+                          ),
+                        ),
+                      ],
+                    )
+                  );
+                }
                 return Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Container(
                     width: double.infinity,
                     child: StaggeredGridView.countBuilder(
                       shrinkWrap: true,
-                      physics: NeverScrollableScrollPhysics(),
+                      physics: const NeverScrollableScrollPhysics(),
                       scrollDirection: Axis.vertical,
                       crossAxisCount: 4,
                       staggeredTileBuilder: (int index) =>
                           new StaggeredTile.fit(2),
                       mainAxisSpacing: 5.0,
                       crossAxisSpacing: 5.0,
-                      reverse: true,
                       itemCount: snapshot.data!.length,
                       itemBuilder: (BuildContext context, int index) {
-                        UserModel userModel = UserModel.fromJson(
+                        VehicleModel vehicleModel = VehicleModel.fromJson(
                             (snapshot.data![index] as dynamic));
                         return GestureDetector(
                           onTap: () {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (c) => EditUser(
-                                  userModel: userModel,
+                                builder: (c) => EditMotorcycle(
+                                  vehicleModel: vehicleModel,
                                 ),
                               ),
                             );
@@ -148,22 +167,25 @@ class _UsersState extends State<Users> {
                               borderRadius: BorderRadius.circular(10),
                             ),
                             child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
                                 const SizedBox(height: 5),
-                                Image.network(
-                                  userModel.url!,
-                                  width: double.infinity,
-                                  height: 120,
-                                ),
+                                
                                 Padding(
                                   padding: const EdgeInsets.all(8.0),
                                   child: Column(
                                     crossAxisAlignment:
-                                        CrossAxisAlignment.start,
+                                        CrossAxisAlignment.center,
                                     children: [
+                                      Image.network(
+                                        vehicleModel.logo!, 
+                                        height: 30,
+                                        width: 30,
+                                        fit: BoxFit.scaleDown,
+                                      ),
+                                      const SizedBox(height: 10),
                                       Text(
-                                        userModel.name!,
+                                        vehicleModel.brand!,
                                         maxLines: 2,
                                         overflow: TextOverflow.ellipsis,
                                         style: const TextStyle(
@@ -173,21 +195,56 @@ class _UsersState extends State<Users> {
                                       ),
                                       const SizedBox(height: 5),
                                       Row(
+                                        mainAxisAlignment: MainAxisAlignment.center,
                                         children: [
                                           const Icon(
-                                            Icons.email,
+                                            Icons.branding_watermark_rounded,
                                             size: 20,
                                           ),
                                           const SizedBox(width: 5),
                                           Flexible(
                                             child: Text(
-                                              userModel.email!,
+                                              vehicleModel.model!,
                                               overflow: TextOverflow.ellipsis,
                                             ),
                                           ),
                                         ],
                                       ),
                                       const SizedBox(height: 5),
+                                      Row(
+                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        children: [
+                                          const Icon(
+                                            Icons.date_range_outlined,
+                                            size: 20,
+                                          ),
+                                          const SizedBox(width: 5),
+                                          Flexible(
+                                            child: Text(
+                                              vehicleModel.year.toString(),
+                                              overflow: TextOverflow.ellipsis,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      SizedBox(height: 5),
+                                      Row(
+                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        children: [
+                                          const Icon(
+                                            Icons.color_lens_sharp,
+                                            size: 20,
+                                          ),
+                                          const SizedBox(width: 5),
+                                          Flexible(
+                                            child: Container(
+                                              color: Color(vehicleModel.color!),
+                                              child: SizedBox(height: 10, width: 10,),
+                                            )
+                                          ),
+                                        ],
+                                      ),
+                                      SizedBox(height: 5),    
                                       
                                     ],
                                   ),
@@ -202,7 +259,7 @@ class _UsersState extends State<Users> {
                 );
               },
             ),
-            const SizedBox(height: 20),
+            SizedBox(height: 20),
           ],
         ),
       ),

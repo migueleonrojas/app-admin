@@ -22,17 +22,17 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:oilappadmin/widgets/loading_widget.dart';
 
-class EditVehicle extends StatefulWidget {
+class EditMotorcycle extends StatefulWidget {
   final VehicleModel? vehicleModel;
   final UserModel? userModel;
 
-  const EditVehicle({Key? key, this.vehicleModel, this.userModel}) : super(key: key);
+  const EditMotorcycle({Key? key, this.vehicleModel, this.userModel}) : super(key: key);
 
   @override
-  _EditVehicleState createState() => _EditVehicleState();
+  _EditMotorcycleState createState() => _EditMotorcycleState();
 }
 
-class _EditVehicleState extends State<EditVehicle> {
+class _EditMotorcycleState extends State<EditMotorcycle> {
 
   void changeColor(Color color) {
    setState(() => pickerColor = color);
@@ -82,7 +82,7 @@ class _EditVehicleState extends State<EditVehicle> {
     return Scaffold(
       appBar: AppBar(
         
-        title: const Text("Editar Vehiculo"),
+        title: const Text("Editar Moto"),
         centerTitle: true,
         leading: IconButton(
           icon: const Icon(Icons.cancel_outlined),
@@ -455,12 +455,12 @@ class _EditVehicleState extends State<EditVehicle> {
                   if(widget.userModel != null)
                   ElevatedButton(
                     onPressed: () {
-                      Navigator.push(
+                      Navigator.pushReplacement(
                         context,
                         MaterialPageRoute(builder: (_) => CarNotes(
                           vehicleModel: widget.vehicleModel,
                           userModel: widget.userModel
-
+                          
                         ))
                       );
                     },
@@ -589,7 +589,7 @@ class _EditVehicleState extends State<EditVehicle> {
     }
 
     void addBrand() async {
-      final alert = (indexBrandController == null && brandController.text == '' && idBrand == null && logoBrand == null) ? AddBrand(collection: 'brandsVehicle',):AddBrand( collection: 'brandsVehicle',selectedIndex:indexBrandController, brandName: brandController.text, brandId: idBrand, logoBrand:logoBrand);
+      final alert = (indexBrandController == null && brandController.text == '' && idBrand == null && logoBrand == null) ? AddBrand(collection: 'brandsMotorcycle',):AddBrand(collection: 'brandsMotorcycle',selectedIndex:indexBrandController, brandName: brandController.text, brandId: idBrand, logoBrand:logoBrand);
       
       final returnDataBrand = await showDialog(context: context, barrierDismissible: false, builder: (_) => alert);
       final indexBrand = (returnDataBrand[0] == '')? '' : returnDataBrand[0];
@@ -611,7 +611,7 @@ class _EditVehicleState extends State<EditVehicle> {
   void addModel() async {
     
     if(idBrand == null) return;
-    final alert = (indexModelController == null && modelController.text == '') ? AddModel(brandId: idBrand, collection: 'modelsVehicle',):AddModel(collection: 'modelsVehicle', selectedIndex:indexModelController, modelName: modelController.text, brandId: idBrand);
+    final alert = (indexModelController == null && modelController.text == '') ? AddModel(collection: 'modelsMotorcycle',brandId: idBrand):AddModel(collection: 'modelsMotorcycle',selectedIndex:indexModelController, modelName: modelController.text, brandId: idBrand);
     
     final returnDataModel = await showDialog(context: context, barrierDismissible: false, builder: (_) => alert);
     final indexModel = (returnDataModel[0] == '')? '' : returnDataModel[0];
@@ -652,14 +652,14 @@ class _EditVehicleState extends State<EditVehicle> {
       }
   }
   Future <int> getIndexBrand() async {
-      QuerySnapshot<Map<String, dynamic>> brandsVehicles = await AutoParts.firestore!
-        .collection(AutoParts.brandsVehicle)
+      QuerySnapshot<Map<String, dynamic>> brandsMotorcycles = await AutoParts.firestore!
+        .collection('brandsMotorcycle')
         .orderBy('name',descending: false)
         .get();
       int index = 0;
-      for(final brandsVehicle in brandsVehicles.docs){
+      for(final brandsMotorcycle in brandsMotorcycles.docs){
         
-        if(widget.vehicleModel!.brand == brandsVehicle.data()['name']){
+        if(widget.vehicleModel!.brand == brandsMotorcycle.data()['name']){
           break;
         }
         index++;
@@ -673,20 +673,20 @@ class _EditVehicleState extends State<EditVehicle> {
     Future <int> getIndexModel() async {
 
       final brand = await AutoParts.firestore!
-        .collection('brandsVehicle')
+        .collection('brandsMotorcycle')
         .where('name', isEqualTo: widget.vehicleModel!.brand).get();
 
-      QuerySnapshot<Map<String, dynamic>> modelsVehicles = await AutoParts.firestore!
-        .collection(AutoParts.modelsVehicle)
+      QuerySnapshot<Map<String, dynamic>> modelsMotorcycles = await AutoParts.firestore!
+        .collection('modelsMotorcycle')
         .where('id_brand', isEqualTo: brand.docs[0].data()['id'])
         .orderBy('name',descending: false)
         .get();
       int index = 0;
       idBrand = brand.docs[0].data()['id'];
       
-      for(final modelsVehicle in modelsVehicles.docs){
+      for(final modelsMotorcycle in modelsMotorcycles.docs){
         
-        if(widget.vehicleModel!.model == modelsVehicle.data()['name'].toString()){
+        if(widget.vehicleModel!.model == modelsMotorcycle.data()['name'].toString()){
           
           break;
         }

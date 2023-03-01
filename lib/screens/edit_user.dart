@@ -2,7 +2,10 @@ import 'dart:io';
 
 import 'package:oilappadmin/model/service_model.dart';
 import 'package:oilappadmin/model/user_model.dart';
+import 'package:oilappadmin/screens/allvehicles_by_user.dart';
+import 'package:oilappadmin/screens/control_orders_by_user.dart';
 import 'package:oilappadmin/screens/main_screen.dart';
+import 'package:oilappadmin/screens/service_order_by_user.dart';
 import 'package:oilappadmin/screens/services.dart';
 import 'package:oilappadmin/screens/products.dart';
 import 'package:oilappadmin/widgets/customsimpledialogoption.dart';
@@ -129,9 +132,48 @@ class _EditUserState extends State<EditUser> {
                       border: OutlineInputBorder(),
                     ),
                   ),
-                  
                   const SizedBox(height: 10),
-                  
+                  ElevatedButton(            
+                    onPressed: () {
+                     Route route = MaterialPageRoute(builder: (c) => ControlOrdersByUser(userModel: widget.userModel!));
+                      if(!mounted)return;
+                      Navigator.push(context, route);
+                    },
+                    child: const Text(
+                      "Ordenes de Compra",
+                      style: TextStyle(
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  ElevatedButton(            
+                    onPressed: () {
+                     Route route = MaterialPageRoute(builder: (c) => ServiceOrdersByUser(userModel: widget.userModel!));
+                      if(!mounted)return;
+                      Navigator.push(context, route);
+                    },
+                    child: const Text(
+                      "Ordenes de Servicio",
+                      style: TextStyle(
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  ElevatedButton(            
+                    onPressed: () {
+                     Route route = MaterialPageRoute(builder: (c) => AllVehiclesByUser(userModel: widget.userModel!));
+                      if(!mounted)return;
+                      Navigator.push(context, route);
+                    },
+                    child: const Text(
+                      "Vehiculos",
+                      style: TextStyle(
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
                   
                 ],
               ),

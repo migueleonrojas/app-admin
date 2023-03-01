@@ -12,19 +12,33 @@ class ServiceOrdersService {
   bool dataFinish = false;
 
   
-  Future <bool>  getServiceOrderWithVehicle({int limit = 5, bool nextDocument = false}) async {
+  Future <bool>  getServiceOrderWithVehicle({int limit = 5, bool nextDocument = false, String userId = ""}) async {
 
     QuerySnapshot<Map<String, dynamic>>? querySnapshotServiceOrder;
-
+    QuerySnapshot<Map<String, dynamic>>? collectionOrders;
     if(!nextDocument){
+      if(userId.isEmpty){
+        collectionOrders = await FirebaseFirestore.instance
+        .collection('serviceOrder')
+        .get();
+      }
+      else{
+        collectionOrders = await FirebaseFirestore.instance
+        .collection('serviceOrder')
+        .where('orderBy', isEqualTo: userId)
+        .get();
+      }
 
-      final collectionOrders = await FirebaseFirestore.instance
-      .collection('serviceOrder')
-      .get();
+      
 
       
       if(collectionOrders.size < limit) {
         limit = collectionOrders.size;
+      }
+
+      if(collectionOrders.size == 0){
+        _suggestionStreamControlerServiceOrder.add(serviceOrderWithVehicle);
+        return true;
       }
       
       final collection = FirebaseFirestore.instance
@@ -41,12 +55,23 @@ class ServiceOrdersService {
 
     else{
       final lastVisible = collectionState!.docs[collectionState!.docs.length-1];
-
-      final collection = FirebaseFirestore.instance
-      .collection('serviceOrder')
-      .limit(limit)
-      .orderBy("orderTime", descending: true)
-      .startAfterDocument(lastVisible);
+      Query<Map<String, dynamic>> collection;
+      if(userId.isEmpty){
+        collection = FirebaseFirestore.instance
+        .collection('serviceOrder')
+        .limit(limit)
+        .orderBy("orderTime", descending: true)
+        .startAfterDocument(lastVisible);
+      }
+      else{
+        collection = FirebaseFirestore.instance
+        .collection('serviceOrder')
+        .where('orderBy', isEqualTo: userId)
+        .limit(limit)
+        .orderBy("orderTime", descending: true)
+        .startAfterDocument(lastVisible);
+      }
+      
 
       final collectionGet = await collection.get();
 

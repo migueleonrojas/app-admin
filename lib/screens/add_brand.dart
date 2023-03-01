@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:oilappadmin/config/config.dart';
+import 'package:oilappadmin/widgets/emptycardmessage.dart';
 
 
 class AddBrand extends StatefulWidget {
@@ -13,7 +14,8 @@ class AddBrand extends StatefulWidget {
   late String previousBrandName;
   late int previousBrandId;
   late String previousLogoBrand;
-  AddBrand({super.key, this.selectedIndex, this.brandName, this.brandId, this.logoBrand});
+  final String collection;
+  AddBrand({super.key, this.selectedIndex, this.brandName, this.brandId, this.logoBrand, required this.collection});
 
   @override
   State<AddBrand> createState() => _AddBrandState();
@@ -21,14 +23,18 @@ class AddBrand extends StatefulWidget {
 
 class _AddBrandState extends State<AddBrand> {
 
-  late ScrollController scrollController = ScrollController(
+  /* late ScrollController scrollController = ScrollController(
     initialScrollOffset:(widget.selectedIndex == null)? 0 : (widget.selectedIndex!.toDouble() * 40) - 80
-  );
+  ); */
+  late FixedExtentScrollController scrollController;
   
   
   @override
   void initState() {
     super.initState();
+    scrollController = FixedExtentScrollController(
+      initialItem: widget.selectedIndex ?? 0
+    );
     widget.holdIndex = (widget.selectedIndex == null) ? false: true;
     widget.previousSelectedIndex = (widget.selectedIndex == null) ? 0: widget.selectedIndex!;
     widget.previousBrandName = (widget.brandName == null)? "": widget.brandName!;
@@ -51,20 +57,86 @@ class _AddBrandState extends State<AddBrand> {
 
   @override
   Widget build(BuildContext context) {
-
+    Size size = MediaQuery.of(context).size;
     return AlertDialog(
       title: const Center(child: Text('Marca')),
       content:
         Container(
+          height: MediaQuery.of(context).size.height * 0.20,
           child: StreamBuilder<QuerySnapshot>(
             stream: AutoParts.firestore!
-            .collection(AutoParts.brandsVehicle)
+            .collection(widget.collection)
+            .orderBy('name',descending: false)
             .snapshots(),
             builder: (context, snapshot) {
               if (!snapshot.hasData) {
                 return Container(height: 120,);
               }
-              return ListView.builder(
+
+              if(snapshot.data!.docs.isEmpty) {
+                return const EmptyCardMessage(
+                  listTitle: 'No hay marcas',
+                  message: 'No hay marcas disponibles',
+                );
+              }
+
+
+              return ListWheelScrollView.useDelegate(
+                physics: FixedExtentScrollPhysics(),
+                controller: scrollController,
+                perspective: 0.010,
+                diameterRatio: 1.5,
+                squeeze: 0.8,
+                itemExtent: size.height * 0.06,
+                onSelectedItemChanged: (value) {
+                
+                  changeIndex(
+                    value, 
+                    (snapshot.data!.docs[value] as dynamic).data()["name"],
+                    (snapshot.data!.docs[value] as dynamic).data()["id"],
+                    (snapshot.data!.docs[value] as dynamic).data()["logo"],
+                  );
+                },
+                
+                childDelegate: ListWheelChildBuilderDelegate(
+                  childCount: snapshot.data!.docs.length,
+                  builder: (context, index) {
+                    return Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        FadeInImage(
+                          placeholder: const AssetImage('assets/no-image/no-image.jpg'),
+                          image: NetworkImage((snapshot.data!.docs[index] as dynamic).data()["logo"]),
+                          width: size.width * 0.2,
+                          fit:BoxFit.contain
+                        ),
+                        GestureDetector(
+                          onTap: () {
+                            changeIndex(
+                              index, 
+                              (snapshot.data!.docs[index] as dynamic).data()["name"],
+                              (snapshot.data!.docs[index] as dynamic).data()["id"],
+                              (snapshot.data!.docs[index] as dynamic).data()["logo"],
+                            );
+                          }, 
+                          child: Material(
+                            color: widget.brandName == (snapshot.data!.docs[index] as dynamic).data()["name"] ? Colors.blue:Colors.transparent,
+                            
+                            borderRadius: BorderRadius.circular(size.height * 0.035),
+                            child: Container(
+                              width: size.width * 0.35,
+                              child: Center(child: Text((snapshot.data!.docs[index] as dynamic).data()["name"],style: TextStyle(fontSize: size.height * 0.020)),),
+                            ),
+                          ),
+                        ),
+                      ],
+                    );
+                
+                  },
+                ),
+              );
+              /* return ListView.builder(
                 controller: scrollController,
                 shrinkWrap: true,
                 itemExtent:40,
@@ -103,7 +175,7 @@ class _AddBrandState extends State<AddBrand> {
                     ],
                   );
                 },
-              );
+              ); */
             },
           ),
         ),

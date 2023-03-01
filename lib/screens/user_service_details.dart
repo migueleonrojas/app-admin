@@ -1,10 +1,12 @@
 
 import 'package:oilappadmin/config/config.dart';
 import 'package:oilappadmin/model/addresss.dart';
+import 'package:oilappadmin/model/service_order_payment_details_model.dart';
 import 'package:oilappadmin/model/users_vehicles_model.dart';
 import 'package:oilappadmin/screens/editAddress.dart';
 import 'package:oilappadmin/screens/main_screen.dart';
-import 'package:oilappadmin/services/service_status.dart';
+
+import 'package:oilappadmin/services/service_status_service.dart';
 import 'package:oilappadmin/widgets/loading_widget.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -16,8 +18,9 @@ class UserServiceDetails extends StatefulWidget {
   final UsersVehiclesModel usersVehiclesModel;
   final String? orderId;
   final String? addressId;
+  final String idOrderPaymentDetails;
 
-  const UserServiceDetails({Key? key, this.orderId, this.addressId, required this.usersVehiclesModel})
+  const UserServiceDetails({Key? key, this.orderId, this.addressId, required this.usersVehiclesModel, required this.idOrderPaymentDetails})
       : super(key: key);
   @override
   _UserServiceDetailsState createState() => _UserServiceDetailsState();
@@ -36,9 +39,10 @@ class _UserServiceDetailsState extends State<UserServiceDetails> {
 
   late DateTime currentUpdateDate = widget.usersVehiclesModel.updateDate!;
 
-
+  
   @override
   Widget build(BuildContext context) {
+    Size size = MediaQuery.of(context).size;
     return Scaffold(
       appBar: AppBar(
         title: const Text("Detalle de la Orden"),
@@ -142,6 +146,108 @@ class _UserServiceDetailsState extends State<UserServiceDetails> {
                 )
               ),
               StreamBuilder<QuerySnapshot>(
+              stream: FirebaseFirestore.instance
+                .collection('serviceOrderPaymentDetails')
+                .where('idOrderPaymentDetails', isEqualTo: widget.idOrderPaymentDetails)
+                .snapshots(),
+                builder: (context, snapshot) {
+                  if (!snapshot.hasData) {
+                    return circularProgress();
+                  }
+                  return Container(
+                    child: ListView.builder(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      itemCount: snapshot.data!.docs.length,
+                      itemBuilder: (context, index) {
+
+                        ServiceOrderPaymentDetailsModel serviceOrderPaymentDetailsModel = ServiceOrderPaymentDetailsModel
+                        .fromJson((snapshot.data!.docs[index] as dynamic).data(),);
+
+                        return Card(
+                          elevation: 3,
+                          child: Column(
+                            children: [
+                              Center(
+                                child: Text(
+                                  'detalle del pago'.toUpperCase(),
+                                  style: TextStyle(
+                                    fontSize: size.height * 0.026,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                )
+                              ),
+                              Padding(
+                                padding: EdgeInsets.all(size.height * 0.012),
+                                child: Column(
+                                  children: [
+                                    Text(
+                                      serviceOrderPaymentDetailsModel.paymentMethod!,
+                                      style: TextStyle(
+                                        fontSize: size.height * 0.022,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                    (serviceOrderPaymentDetailsModel.confirmationNumber != 0)
+                                      ? Text(
+                                        'Número de Confirmación: ${serviceOrderPaymentDetailsModel.confirmationNumber.toString()}',
+                                        style: TextStyle(
+                                          fontSize: size.height * 0.022,
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                      )
+                                      : Container(),
+                                      (serviceOrderPaymentDetailsModel.paymentMethod == "Zelle")
+                                      ? Text(
+                                        'Fecha del Pago: ${DateFormat('dd/MM/yyyy').format(serviceOrderPaymentDetailsModel.paymentDate!)}',
+                                        style: TextStyle(
+                                          fontSize: size.height * 0.022,
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                      )
+                                      :Container(),
+                                    (serviceOrderPaymentDetailsModel.issuerName != "")
+                                      ?Text(
+                                        'Nombre del Emisor: ${serviceOrderPaymentDetailsModel.issuerName.toString()}',
+                                        style: TextStyle(
+                                          fontSize: size.height * 0.022,
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                      )
+                                      :Container(),
+                                    (serviceOrderPaymentDetailsModel.issuerName != "")
+                                      ?Text(
+                                        'Nombre del Titular: ${serviceOrderPaymentDetailsModel.holderName.toString()}',
+                                        style: TextStyle(
+                                          fontSize: size.height * 0.022,
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                      )
+                                      :Container(),
+                                    (serviceOrderPaymentDetailsModel.observations != "")
+                                      ?Text(                                        
+                                        'Observaciones: ${serviceOrderPaymentDetailsModel.observations.toString()}',
+                                        maxLines: 3,
+                                        style: TextStyle(
+                                          fontSize: size.height * 0.022,
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                      )
+                                      :Container(),
+                                    
+
+                                  ],
+                                )
+                              )
+                            ],
+                          ),
+                        );
+                      }
+                    ),
+                  );
+                },
+              ),
+              StreamBuilder<QuerySnapshot>(
                 stream: FirebaseFirestore.instance
                   .collection('users')
                   .where('uid',isEqualTo: widget.usersVehiclesModel.userId)
@@ -193,6 +299,7 @@ class _UserServiceDetailsState extends State<UserServiceDetails> {
                                       ),
                                     ),
                                   ),
+                                  
                                 ],
                               ),
                             ),

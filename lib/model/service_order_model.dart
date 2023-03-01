@@ -14,6 +14,7 @@ class ServiceOrderModel {
   String? onTheWay;
   DateTime? onTheWayTime;
   String? orderBy;
+  String? orderCancelled;
   String? orderHistoyId;
   String? orderId;
   String? orderRecived;
@@ -26,6 +27,7 @@ class ServiceOrderModel {
   String? serviceImage;
   String? serviceName;
   int? totalPrice;
+  String? idOrderPaymentDetails;
   ServiceOrderModel({
     this.addressID,
     this.beingPrePared,
@@ -38,6 +40,7 @@ class ServiceOrderModel {
     this.onTheWay,
     this.onTheWayTime,
     this.orderBy,
+    this.orderCancelled,
     this.orderHistoyId,
     this.orderId,
     this.orderRecived,
@@ -50,6 +53,7 @@ class ServiceOrderModel {
     this.serviceImage,
     this.serviceName,
     this.totalPrice,
+    this.idOrderPaymentDetails
   });
 
   ServiceOrderModel.fromJson(Map<String, dynamic> json) {
@@ -64,6 +68,7 @@ class ServiceOrderModel {
     onTheWay =  json['onTheWay'];
     onTheWayTime = json['onTheWayTime'].toDate();
     orderBy =  json['orderBy'];
+    orderCancelled = json['orderCancelled'];
     orderHistoyId = json['orderHistoyId'];
     orderId = json['orderId'];
     orderRecived = json['orderRecived'];
@@ -76,6 +81,7 @@ class ServiceOrderModel {
     serviceImage = json['serviceImage'];
     serviceName = json['serviceName'];
     totalPrice = json['totalPrice'];
+    idOrderPaymentDetails = json['idOrderPaymentDetails'];
   }
   /* ModelVehicleWithBrand.fromSnaphot(DocumentSnapshot snapshot) {
     brandName = (snapshot.data() as dynamic)['id'];
@@ -94,6 +100,7 @@ class ServiceOrderModel {
     data['onTheWay'] = this.onTheWay;
     data['onTheWayTime'] = this.onTheWayTime;
     data['orderBy'] = this.orderBy;
+    data['orderCancelled'] =  this.orderCancelled;
     data['orderHistoyId'] = this.orderHistoyId;
     data['orderId'] = this.orderId;
     data['orderRecived'] = this.orderRecived;
@@ -106,6 +113,7 @@ class ServiceOrderModel {
     data['serviceImage'] = this.serviceImage;
     data['serviceName'] = this.serviceName;
     data['totalPrice'] = this.totalPrice;
+    data['idOrderPaymentDetails'] = this.idOrderPaymentDetails;
     return data;
   }
 }

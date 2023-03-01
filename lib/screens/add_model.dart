@@ -1,32 +1,37 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:oilappadmin/config/config.dart';
+import 'package:oilappadmin/widgets/emptycardmessage.dart';
 
 
 class AddModel extends StatefulWidget {
   int? selectedIndex;
-  String? modelName;
+  dynamic modelName;
   int? brandId;
   bool holdIndex = false;
   late int previousSelectedIndex = 0;
   late String previousModelName;
   late int previousModelId;
-  AddModel({super.key, this.selectedIndex, this.modelName, this.brandId});
+  final String collection;
+  AddModel({super.key, this.selectedIndex, this.modelName, this.brandId, required this.collection});
 
   @override
   State<AddModel> createState() => _AddModelState();
 }
 
 class _AddModelState extends State<AddModel> {
-
-  late ScrollController scrollController = ScrollController(
+  late FixedExtentScrollController scrollController;
+  /* late ScrollController scrollController = ScrollController(
     initialScrollOffset:(widget.selectedIndex == null)? 0 : (widget.selectedIndex!.toDouble() * 40) - 80
-  );
+  ); */
   
   
   @override
   void initState() {
     super.initState();
+    scrollController = FixedExtentScrollController(
+      initialItem: widget.selectedIndex ?? 0
+    );
     widget.holdIndex = (widget.selectedIndex == null) ? false: true;
     widget.previousSelectedIndex = (widget.selectedIndex == null) ? 0: widget.selectedIndex!;
     widget.previousModelName = (widget.modelName == null)? "": widget.modelName!;
@@ -39,7 +44,7 @@ class _AddModelState extends State<AddModel> {
     super.dispose();
   }
 
-  void changeIndex(int index, String brandNameSnapshot) {
+  void changeIndex(int index, dynamic brandNameSnapshot) {
    setState(() {
     widget.selectedIndex = index;
     widget.modelName = brandNameSnapshot;
@@ -48,21 +53,75 @@ class _AddModelState extends State<AddModel> {
 
   @override
   Widget build(BuildContext context) {
-
+    Size size = MediaQuery.of(context).size;
     return AlertDialog(
       title: const Center(child: Text('Models')),
       content:
         Container(
+          height: MediaQuery.of(context).size.height * 0.20,
           child: StreamBuilder<QuerySnapshot>(
             stream: AutoParts.firestore!
-            .collection(AutoParts.modelsVehicle)
+            .collection(widget.collection)
             .where('id_brand', isEqualTo: widget.brandId)
+            .orderBy('name',descending: false)
             .snapshots(),
             builder: (context, snapshot) {
               if (!snapshot.hasData) {
                 return Container(height: 120,);
               }
-              return ListView.builder(
+              if(snapshot.data!.docs.isEmpty) {
+                return const EmptyCardMessage(
+                  listTitle: 'No hay modelos',
+                  message: 'No hay modelos disponibles',
+                );
+              }
+              return ListWheelScrollView.useDelegate(
+                physics: FixedExtentScrollPhysics(),
+                controller: scrollController,
+                perspective: 0.010,
+                diameterRatio: 1.5,
+                squeeze: 0.8,
+                itemExtent: size.width * 0.1,
+                onSelectedItemChanged: (value) {
+                  changeIndex(
+                    value, 
+                    (snapshot.data!.docs[value] as dynamic).data()["name"]
+                  );
+                },
+
+                childDelegate: ListWheelChildBuilderDelegate(
+                  childCount: snapshot.data!.docs.length,
+                  builder: (context, index) {
+                    
+                    return Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        
+                        GestureDetector(
+                          onTap: () {
+                            changeIndex(
+                              index, 
+                              (snapshot.data!.docs[index] as dynamic).data()["name"]
+                            );
+                          }, 
+                          child: Material(
+                            color: widget.modelName.toString() == (snapshot.data!.docs[index] as dynamic).data()["name"].toString() ? Colors.blue:Colors.transparent,
+                            /* color: widget.selectedIndex == index ? Colors.blue : Colors.transparent, */
+                            borderRadius: BorderRadius.circular(size.height * 0.035),
+                            child: Container(
+                              width: size.width * 0.35,
+                              child: Center(child: Text('${(snapshot.data!.docs[index] as dynamic).data()["name"]}',style: TextStyle(fontSize: size.height * 0.020)),),
+                            ),
+                          ),
+                        ),
+                      ],
+                    );
+                  }
+                ),
+
+              );
+              /* return ListView.builder(
                 controller: scrollController,
                 shrinkWrap: true,
                 itemExtent:40,
@@ -91,7 +150,7 @@ class _AddModelState extends State<AddModel> {
                     ],
                   );
                 },
-              );
+              ); */
             },
           ),
         ),

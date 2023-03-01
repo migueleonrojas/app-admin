@@ -8,7 +8,9 @@ import 'package:image_picker/image_picker.dart';
 import 'package:oilappadmin/model/brand_vehicle_model..dart';
 import 'package:oilappadmin/model/model_vehicle_model.dart';
 import 'package:oilappadmin/services/brandVehicle.dart';
-import 'package:oilappadmin/services/modelVehicle.dart';
+import 'package:oilappadmin/services/modelVehicle_service.dart';
+
+
 import 'package:oilappadmin/widgets/customsimpledialogoption.dart';
 import 'package:oilappadmin/widgets/error_dialog.dart';
 import 'package:path_provider/path_provider.dart';
@@ -28,8 +30,8 @@ class _EditModelVehicleState extends State<EditModelVehicle> {
   XFile? file;
   GlobalKey<FormState> _modelformkey = GlobalKey<FormState>();
   TextEditingController modelController = TextEditingController();
-  BrandVehicle _brandVehicle = BrandVehicle();
-  ModelVehicle _modelVehicle = ModelVehicle();
+  BrandVehicleService _brandVehicle = BrandVehicleService();
+  ModelVehicleService _modelVehicle = ModelVehicleService();
   
 
   @override

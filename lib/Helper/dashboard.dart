@@ -1,5 +1,6 @@
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:oilappadmin/Helper/custom_card.dart';
+import 'package:oilappadmin/screens/allvehicles.dart';
 import 'package:oilappadmin/screens/brands_services_and_products.dart';
 import 'package:oilappadmin/screens/categories_services_and_products.dart';
 import 'package:oilappadmin/screens/control_orders.dart';
@@ -528,7 +529,7 @@ class Dashboard extends StatelessWidget {
                             );
                           }
     
-                          Route route = MaterialPageRoute(builder: (c) => Vehicles());
+                          Route route = MaterialPageRoute(builder: (c) => AllVehicles());
                               
                           Navigator.push(context, route);
                         },
@@ -551,7 +552,7 @@ class Dashboard extends StatelessWidget {
                             );
                           }
     
-                          Route route = MaterialPageRoute(builder: (c) => Vehicles());
+                          Route route = MaterialPageRoute(builder: (c) => AllVehicles());
                               
                           Navigator.push(context, route);
                         },

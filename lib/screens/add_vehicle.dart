@@ -5,8 +5,9 @@ import 'package:image_picker/image_picker.dart';
 import 'package:oilappadmin/Helper/custom_manage_button.dart';
 import 'package:oilappadmin/screens/main_screen.dart';
 import 'package:oilappadmin/services/brandVehicle.dart';
-import 'package:oilappadmin/services/colorVehicle.dart';
-import 'package:oilappadmin/services/modelVehicle.dart';
+import 'package:oilappadmin/services/colorVehicle_service.dart';
+import 'package:oilappadmin/services/modelVehicle_service.dart';
+
 import 'package:oilappadmin/services/yearVehicle.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:oilappadmin/widgets/customsimpledialogoption.dart';
@@ -32,8 +33,8 @@ class _AddVehicleState extends State<AddVehicle> {
   
   String serviceId = DateTime.now().microsecondsSinceEpoch.toString();
 
-  BrandVehicle _brandVehicle = BrandVehicle();
-  ModelVehicle _modelVehicle = ModelVehicle();
+  BrandVehicleService _brandVehicle = BrandVehicleService();
+  ModelVehicleService _modelVehicle = ModelVehicleService();
   YearVehicle _yearVehicle = YearVehicle();
   ColorVehicle _colorVehicle = ColorVehicle();
 

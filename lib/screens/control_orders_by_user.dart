@@ -1,4 +1,5 @@
 import 'package:oilappadmin/config/config.dart';
+import 'package:oilappadmin/model/user_model.dart';
 import 'package:oilappadmin/screens/main_screen.dart';
 import 'package:oilappadmin/screens/user_order_details.dart';
 import 'package:oilappadmin/services/controls_order_service.dart';
@@ -10,12 +11,15 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:timeago/timeago.dart' as timeago;
 
-class ControlOrders extends StatefulWidget {
+class ControlOrdersByUser extends StatefulWidget {
+  final UserModel userModel;
+
+  ControlOrdersByUser({required this.userModel});
   @override
-  _ControlOrdersState createState() => _ControlOrdersState();
+  _ControlOrdersByUserState createState() => _ControlOrdersByUserState();
 }
 
-class _ControlOrdersState extends State<ControlOrders> {
+class _ControlOrdersByUserState extends State<ControlOrdersByUser> {
   final ControlsOrdersService controlsOrdersService = ControlsOrdersService();
   final ScrollController scrollController = ScrollController();
   int limit = 5;
@@ -25,7 +29,7 @@ class _ControlOrdersState extends State<ControlOrders> {
   @override
   void initState() {
     super.initState();
-    controlsOrdersService.getControlsOrders(limit: 5);
+    controlsOrdersService.getControlsOrders(limit: 5, userId: widget.userModel.uid!);
     scrollController.addListener(() async {
       
       if(scrollController.position.pixels + 200 > scrollController.position.maxScrollExtent) {
@@ -34,7 +38,7 @@ class _ControlOrdersState extends State<ControlOrders> {
         
         isLoading = true;
         await Future.delayed(const Duration(seconds: 1));
-        dataFinish = await controlsOrdersService.getControlsOrders(limit: limit, nextDocument: true);
+        dataFinish = await controlsOrdersService.getControlsOrders(limit: limit, nextDocument: true, userId: widget.userModel.uid!);
         isLoading = false;
         
         if(scrollController.position.pixels + 200 <= scrollController.position.maxScrollExtent) return;
@@ -95,7 +99,7 @@ class _ControlOrdersState extends State<ControlOrders> {
                   return circularProgress();
                 }
 
-                if (snapshot.data!.isEmpty) {
+                if (snapshot.data!.isEmpty ) {
                   return const EmptyCardMessage(
                     listTitle: 'No hay Ordenes actualmente',
                     message: 'No hay Ordenes por lo momentos',

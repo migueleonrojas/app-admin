@@ -2,7 +2,9 @@ import 'package:oilappadmin/Helper/dashboard.dart';
 import 'package:oilappadmin/Helper/manage.dart';
 import 'package:oilappadmin/config/config.dart';
 import 'package:oilappadmin/model/service_model.dart';
+import 'package:oilappadmin/model/user_model.dart';
 import 'package:oilappadmin/model/vehicle_model.dart';
+import 'package:oilappadmin/screens/edit_motorcycle.dart';
 import 'package:oilappadmin/screens/edit_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -13,12 +15,15 @@ import 'package:oilappadmin/services/vehicles_service.dart';
 import 'package:oilappadmin/widgets/emptycardmessage.dart';
 import 'package:oilappadmin/widgets/loading_widget.dart';
 
-class Vehicles extends StatefulWidget {
+class MotorcyclesByUser extends StatefulWidget {
+
+  final UserModel userModel;
+  MotorcyclesByUser({required this.userModel});
   @override
-  _VehiclesState createState() => _VehiclesState();
+  _MotorcyclesByUserState createState() => _MotorcyclesByUserState();
 }
 
-class _VehiclesState extends State<Vehicles> {
+class _MotorcyclesByUserState extends State<MotorcyclesByUser> {
   final VehiclesService vehiclesService = VehiclesService();
   final ScrollController scrollController = ScrollController();
   int limit = 5;
@@ -28,7 +33,7 @@ class _VehiclesState extends State<Vehicles> {
   @override
   void initState() {
     super.initState();
-    vehiclesService.getVehicles(limit: 10, typeOfVehicle: 'car');
+    vehiclesService.getVehicles(limit: 10, userId: widget.userModel.uid!,typeOfVehicle: 'motorcycle');
     scrollController.addListener(() async {
       
       if(scrollController.position.pixels + 200 > scrollController.position.maxScrollExtent) {
@@ -37,7 +42,7 @@ class _VehiclesState extends State<Vehicles> {
         
         isLoading = true;
         await Future.delayed(const Duration(seconds: 1));
-        dataFinish = await vehiclesService.getVehicles(limit: limit, nextDocument: true, typeOfVehicle: 'car');
+        dataFinish = await vehiclesService.getVehicles(limit: limit, nextDocument: true, userId: widget.userModel.uid!,typeOfVehicle: 'motorcycle');
         isLoading = false;
         
         if(scrollController.position.pixels + 200 <= scrollController.position.maxScrollExtent) return;
@@ -61,7 +66,7 @@ class _VehiclesState extends State<Vehicles> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Todos los Carros"),
+        title: const Text("Todas las Motos"),
         centerTitle: true,
         leading: IconButton(
           icon: const Icon(Icons.cancel_outlined),
@@ -154,8 +159,9 @@ class _VehiclesState extends State<Vehicles> {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (c) => EditVehicle(
+                                builder: (c) => EditMotorcycle(
                                   vehicleModel: vehicleModel,
+                                  userModel: widget.userModel,
                                 ),
                               ),
                             );

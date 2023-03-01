@@ -11,20 +11,37 @@ class ControlsOrdersService {
   bool dataFinish = false;
 
 
-  Future <bool> getControlsOrders({int limit = 5, bool nextDocument = false}) async {
+  Future <bool> getControlsOrders({int limit = 5, bool nextDocument = false, String userId = ""}) async {
+
+
 
     QuerySnapshot<Map<String, dynamic>>? querySnapshotControlsOrders;
-
+    QuerySnapshot<Map<String, dynamic>>? collectionControlsOrders;
     if(!nextDocument){
 
-      final collectionControlsOrders = await FirebaseFirestore.instance
-      .collection("orders")
-      .orderBy("orderTime", descending: true)
-      .get();
+      if(userId.isEmpty){
+        collectionControlsOrders = await FirebaseFirestore.instance
+        .collection("orders")
+        .orderBy("orderTime", descending: true)
+        .get();
+      }
+      else{
+        collectionControlsOrders = await FirebaseFirestore.instance
+        .collection("orders")
+        .where('orderBy',isEqualTo: userId)
+        .orderBy("orderTime", descending: true)
+        .get();
+      }
+      
 
       
       if(collectionControlsOrders.size < limit) {
         limit = collectionControlsOrders.size;
+      }
+
+      if(collectionControlsOrders.size == 0){
+        _suggestionStreamControlerControlsOrders.add(controlsOrders);
+        return true;
       }
       
       final collection = FirebaseFirestore.instance
@@ -41,12 +58,23 @@ class ControlsOrdersService {
 
     else{
       final lastVisible = collectionState!.docs[collectionState!.docs.length-1];
-
-      final collection = FirebaseFirestore.instance
-      .collection("orders")
-      .limit(limit)
-      .orderBy("orderTime", descending: true)
-      .startAfterDocument(lastVisible);
+      Query<Map<String, dynamic>> collection;
+      if(userId.isEmpty){
+        collection = FirebaseFirestore.instance
+        .collection("orders")
+        .limit(limit)
+        .orderBy("orderTime", descending: true)
+        .startAfterDocument(lastVisible);
+      }
+      else{
+        collection = FirebaseFirestore.instance
+        .collection("orders")
+        .where('orderBy',isEqualTo: userId)
+        .limit(limit)
+        .orderBy("orderTime", descending: true)
+        .startAfterDocument(lastVisible);
+      }
+      
 
       final collectionGet = await collection.get();
 

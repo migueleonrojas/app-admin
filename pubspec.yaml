@@ -52,6 +52,7 @@ dependencies:
   google_fonts: ^3.0.1
   google_sign_in: ^5.4.2
   image_picker: ^0.8.6
+  file_picker: ^5.2.4
   intl: ^0.17.0
   path_provider: ^2.0.11
   provider: ^6.0.4

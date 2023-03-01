@@ -21,7 +21,7 @@ class BrandVehicles extends StatefulWidget {
 
 class _BrandVehiclesState extends State<BrandVehicles> {
   final ScrollController scrollController = ScrollController();
-  BrandVehicle brandVehicle = BrandVehicle();
+  BrandVehicleService brandVehicle = BrandVehicleService();
   int limit = 10;
   bool dataFinish = false;
   bool isLoading =  false;

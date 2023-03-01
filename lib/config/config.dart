@@ -32,6 +32,7 @@ class AutoParts
    static final String userPhotoUrl = 'photoUrl';
    static final String userUID = 'uid';
    static final String userAvatarUrl = 'url';
+   static final String tokenFirebaseMsg = 'firebasemsg';
 
    static final String addressID = 'addressID';
    static final String totalAmount = 'totalAmount';

@@ -13,11 +13,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:oilappadmin/screens/edit_vehicle.dart';
 import 'package:oilappadmin/screens/main_screen.dart';
+import 'package:oilappadmin/services/modelVehicle_service.dart';
 import 'package:oilappadmin/widgets/emptycardmessage.dart';
 import 'package:oilappadmin/widgets/loading_widget.dart';
 import 'package:rxdart/rxdart.dart';
 
-import '../services/modelVehicle.dart';
+
 
 class ModelsVehicles extends StatefulWidget {
   @override
@@ -26,7 +27,7 @@ class ModelsVehicles extends StatefulWidget {
 
 class _ModelsVehiclesState extends State<ModelsVehicles> {
   final ScrollController scrollController = ScrollController();
-  ModelVehicle modelVehicle = ModelVehicle();
+  ModelVehicleService modelVehicle = ModelVehicleService();
   int limit = 10;
   bool dataFinish = false;
   bool isLoading =  false;

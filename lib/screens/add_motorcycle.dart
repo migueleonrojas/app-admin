@@ -7,9 +7,9 @@ import 'package:oilappadmin/screens/add_brandMotorcycle.dart';
 import 'package:oilappadmin/screens/main_screen.dart';
 import 'package:oilappadmin/services/brandMotorcycle.dart';
 import 'package:oilappadmin/services/brandVehicle.dart';
-import 'package:oilappadmin/services/colorVehicle.dart';
-import 'package:oilappadmin/services/modelMotorcycle.dart';
-import 'package:oilappadmin/services/modelVehicle.dart';
+import 'package:oilappadmin/services/colorVehicle_service.dart';
+import 'package:oilappadmin/services/modelMotorcycle_service.dart';
+
 import 'package:oilappadmin/services/yearVehicle.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:oilappadmin/widgets/customsimpledialogoption.dart';
