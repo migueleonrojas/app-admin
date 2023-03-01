@@ -81,7 +81,7 @@ class _AllVehiclesByUserState extends State<AllVehiclesByUser>
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(Icons.dashboard_customize),
+                  Icon(Icons.garage_rounded),
                   SizedBox(width: 5),
                   Text(
                     "Carros",
@@ -97,7 +97,7 @@ class _AllVehiclesByUserState extends State<AllVehiclesByUser>
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: const [
-                  Icon(Icons.filter_frames),
+                  Icon(Icons.motorcycle),
                   SizedBox(width: 5),
                   Text(
                     "Motos",

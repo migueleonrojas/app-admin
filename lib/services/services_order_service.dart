@@ -45,13 +45,14 @@ class ServiceOrdersService {
       if(userId.isEmpty){
         collection = FirebaseFirestore.instance
         .collection('serviceOrder')
-        .where('orderBy', isEqualTo: userId)
+        
         .limit(limit)
         .orderBy("orderTime", descending: true);
       }
       else{
         collection = FirebaseFirestore.instance
         .collection('serviceOrder')
+        .where('orderBy', isEqualTo: userId)
         .limit(limit)
         .orderBy("orderTime", descending: true);
       }
