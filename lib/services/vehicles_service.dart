@@ -17,7 +17,7 @@ class VehiclesService{
     QuerySnapshot<Map<String, dynamic>>? querySnapshotVehicles;
     QuerySnapshot<Map<String, dynamic>>? collectionVehicles;
     if(!nextDocument){
-
+      print(userId);
       if(userId.isEmpty){
         
         collectionVehicles = await FirebaseFirestore.instance
@@ -29,8 +29,8 @@ class VehiclesService{
       else{
         collectionVehicles = await FirebaseFirestore.instance
         .collection("usersVehicles")
-        .where('typeOfVehicle',isEqualTo: typeOfVehicle)
         .where('userId',isEqualTo: userId)
+        .where('typeOfVehicle',isEqualTo: typeOfVehicle)
         .orderBy("updateDate", descending: true)
         .get();
       }
@@ -45,12 +45,24 @@ class VehiclesService{
         _suggestionStreamControlerVehicles.add(vehicles);
         return true;
       }
-      
-      final collection = FirebaseFirestore.instance
-      .collection("usersVehicles")
-      .where('typeOfVehicle',isEqualTo: typeOfVehicle)
-      .limit(limit)
-      .orderBy("updateDate", descending: true);
+
+      Query<Map<String, dynamic>>? collection;
+      if(userId.isEmpty){
+        collection = FirebaseFirestore.instance
+        .collection("usersVehicles")
+        .where('typeOfVehicle',isEqualTo: typeOfVehicle)
+        .limit(limit)
+        .orderBy("updateDate", descending: true);
+      }
+      else{
+        collection = FirebaseFirestore.instance
+        .collection("usersVehicles")
+        .where('userId',isEqualTo: userId)
+        .where('typeOfVehicle',isEqualTo: typeOfVehicle)
+        .limit(limit)
+        .orderBy("updateDate", descending: true);
+      }
+       
 
       collection.get().then((values)  {
         collectionState = values; 
@@ -73,8 +85,8 @@ class VehiclesService{
       else{
         collection = FirebaseFirestore.instance
         .collection("usersVehicles")
-        .where('typeOfVehicle',isEqualTo: typeOfVehicle)
         .where('userId',isEqualTo: userId)
+        .where('typeOfVehicle',isEqualTo: typeOfVehicle)
         .limit(limit)
         .orderBy("updateDate", descending: true)
         .startAfterDocument(lastVisible);

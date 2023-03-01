@@ -61,13 +61,13 @@ class _UserSearchState extends State<UserSearch> {
         if (username.contains(searchUserController.text.toLowerCase())) {
           showResult.add(userfromjson);
         }
-        if (email.contains(searchUserController.text.toLowerCase())) {
+        else if (email.contains(searchUserController.text.toLowerCase())) {
           showResult.add(userfromjson);
         }
-        if (phone.contains(searchUserController.text.toLowerCase().replaceFirst('0', ''))) {
+        else if (phone.contains(searchUserController.text.toLowerCase().replaceFirst('0', ''))) {
           showResult.add(userfromjson);
         }
-        if (address.contains(searchUserController.text.toLowerCase().replaceFirst('0', ''))) {
+        else if (address.contains(searchUserController.text.toLowerCase().replaceFirst('0', ''))) {
           showResult.add(userfromjson);
         }
 
