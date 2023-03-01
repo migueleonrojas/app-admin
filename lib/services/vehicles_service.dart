@@ -17,7 +17,7 @@ class VehiclesService{
     QuerySnapshot<Map<String, dynamic>>? querySnapshotVehicles;
     QuerySnapshot<Map<String, dynamic>>? collectionVehicles;
     if(!nextDocument){
-      print(userId);
+     
       if(userId.isEmpty){
         
         collectionVehicles = await FirebaseFirestore.instance

@@ -43,11 +43,22 @@ class ControlsOrdersService {
         _suggestionStreamControlerControlsOrders.add(controlsOrders);
         return true;
       }
+
+      Query<Map<String, dynamic>> collection;
+      if(userId.isEmpty){
+        collection = FirebaseFirestore.instance
+        .collection("orders")
+        .limit(limit)
+        .orderBy("orderTime", descending: true);
+      }
+      else{
+        collection = FirebaseFirestore.instance
+        .collection("orders")
+        .where('orderBy',isEqualTo: userId)
+        .limit(limit)
+        .orderBy("orderTime", descending: true);
+      }
       
-      final collection = FirebaseFirestore.instance
-      .collection("orders")
-      .limit(limit)
-      .orderBy("orderTime", descending: true);
 
       collection.get().then((values)  {
         collectionState = values; 

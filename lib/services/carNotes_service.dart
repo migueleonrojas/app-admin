@@ -43,12 +43,24 @@ class CarNoteService{
         _suggestionStreamControlerCarNotes.add(carNotes);
         return true;
       }
+
+      Query<Map<String, dynamic>> collection;
+      if(vehicleId.isEmpty){
+        collection = FirebaseFirestore.instance
+        .collection("carNotesUserVehicles")
+        .where('vehicleId',isEqualTo: vehicleId)
+        .limit(limit)
+        .orderBy("date", descending: true);
+      }
+      else{
+        collection = FirebaseFirestore.instance
+        .collection("carNotesUserVehicles")
+        .where('vehicleId',isEqualTo: vehicleId)
+        .limit(limit)
+        .orderBy("date", descending: true);
+      }
       
-      final collection = FirebaseFirestore.instance
-      .collection("carNotesUserVehicles")
-      .where('vehicleId',isEqualTo: vehicleId)
-      .limit(limit)
-      .orderBy("date", descending: true);
+      
 
       collection.get().then((values)  {
         collectionState = values; 
