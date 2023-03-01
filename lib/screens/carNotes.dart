@@ -28,20 +28,27 @@ class CarNotes extends StatefulWidget {
 class _CarNotesState extends State<CarNotes> {
   List <VehicleModel>? usersVehicles = [];
   List <Map<String,dynamic>> listAttachments = [];
+
   final CarNoteService carNoteService = CarNoteService();
   final ScrollController scrollController = ScrollController();
   int limit = 5;
   bool dataFinish = false;
   bool isLoading =  false;
+  bool attachmentsLoaded = false;
 
   @override
   void initState() {
     super.initState();
+    
     Future.delayed(Duration.zero, () async {
 
       await getListAttachments();
-      setState((){});
+      if(mounted){
+        setState(() {});
+      }
+      
     });
+    
     carNoteService.getCarNotes(limit: 10, vehicleId: widget.vehicleModel!.vehicleId!);
     scrollController.addListener(() async {
       
@@ -67,7 +74,7 @@ class _CarNotesState extends State<CarNotes> {
 
   @override
   void dispose() {
-    scrollController.dispose();
+
     super.dispose();
   }
 
@@ -98,9 +105,7 @@ class _CarNotesState extends State<CarNotes> {
           )
         ],
       ),
-      body: /* listAttachments.isEmpty
-      ? circularProgress()
-      : */ SingleChildScrollView(
+      body: SingleChildScrollView(
         controller: scrollController,
         child: Column(
           children: [
@@ -120,6 +125,8 @@ class _CarNotesState extends State<CarNotes> {
                   return circularProgress();
                 }
 
+                
+
                 if (snapshot.data!.isEmpty) {
                   return const EmptyCardMessage(
                     listTitle: 'No hay notas de servicio',
@@ -127,7 +134,8 @@ class _CarNotesState extends State<CarNotes> {
                   );
                 }
                 
-                return listAttachments.isEmpty
+                return 
+                listAttachments.isEmpty
                 ? circularProgress()
                 : ListView.builder(
                   shrinkWrap: true,
@@ -136,7 +144,7 @@ class _CarNotesState extends State<CarNotes> {
                   reverse: true,
                   scrollDirection: Axis.vertical,
                   itemBuilder:  (context, index) {
-
+                    
                     return ListTile(
                       leading: FadeInImage(
                         placeholder: const AssetImage('assets/no-image/no-image.jpg'),
@@ -164,7 +172,7 @@ class _CarNotesState extends State<CarNotes> {
                           }
 
                         }
-                        
+                        if(listAttachments.isEmpty) return;
                         Navigator.push(
                           context,
                           MaterialPageRoute(
@@ -212,7 +220,9 @@ class _CarNotesState extends State<CarNotes> {
 
   getListAttachments() async {
     QuerySnapshot<Map<String, dynamic>> carNotesUsers = await FirebaseFirestore.instance
-      .collection("carNotesUserVehicles").get();
+      .collection("carNotesUserVehicles")
+      .where('userId',isEqualTo: widget.userModel!.uid)
+      .get();
     QuerySnapshot<Map<String, dynamic>>? attachmentsDocs;
 
     
@@ -222,13 +232,16 @@ class _CarNotesState extends State<CarNotes> {
       QuerySnapshot<Map<String, dynamic>> attachmentsDocs = await carNotesUser.reference
         .collection("attachmentsCarNotesUsers")
         .where('userId',isEqualTo: widget.userModel!.uid).get();
-
+      
+      
       for(final attachmentsDoc in attachmentsDocs.docs){
 
         listAttachments.add(attachmentsDoc.data());
       }
 
     }
+    attachmentsLoaded = true;
+
     
     
   }
