@@ -114,7 +114,7 @@ class _ServiceOrdersByUserState extends State<ServiceOrdersByUser> {
                   itemBuilder: (context, index) {
                     final serviceOrderWithVehicle = snapshot.data!;
 
-                    ServiceOrderWithVehicle seviceOrderWithVehicleModel = ServiceOrderWithVehicle.fromJson(
+                    ServiceOrderWithVehicleModel seviceOrderWithVehicleModel = ServiceOrderWithVehicleModel.fromJson(
                         serviceOrderWithVehicle[index].toJson()
                     );
 

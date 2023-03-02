@@ -5,17 +5,21 @@ import 'package:oilappadmin/model/service_order_with_vehicles_model.dart';
 
 class ServiceOrdersService {
 
-  final StreamController <List<ServiceOrderWithVehicle>> _suggestionStreamControlerServiceOrder = StreamController.broadcast();
-  Stream<List<ServiceOrderWithVehicle>> get suggestionStreamServiceOrder => _suggestionStreamControlerServiceOrder.stream;
-  List<ServiceOrderWithVehicle> serviceOrderWithVehicle = [];
+  final StreamController <List<ServiceOrderWithVehicleModel>> _suggestionStreamControlerServiceOrder = StreamController.broadcast();
+  Stream<List<ServiceOrderWithVehicleModel>> get suggestionStreamServiceOrder => _suggestionStreamControlerServiceOrder.stream;
+  List<ServiceOrderWithVehicleModel> serviceOrderWithVehicle = [];
   QuerySnapshot? collectionState;
   bool dataFinish = false;
 
+  setEmptyServiceOrderWithVehicleList(){
+    serviceOrderWithVehicle = [];
+  }
   
-  Future <bool>  getServiceOrderWithVehicle({int limit = 5, bool nextDocument = false, String userId = ""}) async {
+  Future <bool>  getServiceOrderWithVehicle({int limit = 5, bool nextDocument = false, String userId = "", bool useLimit = true, String orderId = ''}) async {
 
     QuerySnapshot<Map<String, dynamic>>? querySnapshotServiceOrder;
     QuerySnapshot<Map<String, dynamic>>? collectionOrders;
+
     if(!nextDocument){
       if(userId.isEmpty){
         collectionOrders = await FirebaseFirestore.instance
@@ -29,25 +33,34 @@ class ServiceOrdersService {
         .get();
       }
 
-      
-
-      
       if(collectionOrders.size < limit) {
         limit = collectionOrders.size;
       }
 
-      if(collectionOrders.size == 0){
+      if(collectionOrders.size == 0 && useLimit){
         _suggestionStreamControlerServiceOrder.add(serviceOrderWithVehicle);
         return true;
       }
       
       Query<Map<String, dynamic>> collection;
       if(userId.isEmpty){
-        collection = FirebaseFirestore.instance
-        .collection('serviceOrder')
+        if(useLimit){
+          collection = FirebaseFirestore.instance
+          .collection('serviceOrder')
+          .limit(limit)
+          .orderBy("orderTime", descending: true);
+        }
+        else{/* buscando sin usar un limite de resultados */
+          
+          collection = FirebaseFirestore.instance
+          .collection('serviceOrder')
+          .where('orderId',isEqualTo: orderId)
+          .orderBy("orderTime", descending: true);
+          /* .where('orderId',isEqualTo: orderId); */
+          
+        }
         
-        .limit(limit)
-        .orderBy("orderTime", descending: true);
+
       }
       else{
         collection = FirebaseFirestore.instance
@@ -68,6 +81,7 @@ class ServiceOrdersService {
 
     else{
       final lastVisible = collectionState!.docs[collectionState!.docs.length-1];
+
       Query<Map<String, dynamic>> collection;
       if(userId.isEmpty){
         collection = FirebaseFirestore.instance
@@ -98,28 +112,30 @@ class ServiceOrdersService {
       });
 
       querySnapshotServiceOrder = await collection.get();  
-
-
+      
     }
 
     List<QueryDocumentSnapshot<Map<String,dynamic>>> documentsServiceOrders = querySnapshotServiceOrder.docs;
-
+    QuerySnapshot<Map<String, dynamic>> querySnapshotUsersVehicles = await FirebaseFirestore.instance.collection('usersVehicles').get();
+    List<QueryDocumentSnapshot<Map<String,dynamic>>> documentsUsersVehicles = querySnapshotUsersVehicles.docs;
+    
     for(final documentsServiceOrder in documentsServiceOrders) {
-     
-      QuerySnapshot<Map<String, dynamic>> querySnapshotVehicle = await FirebaseFirestore.instance.collection('usersVehicles').where('vehicleId', isEqualTo: (documentsServiceOrder.data() as dynamic)['vehicleId']).get();
-      List<QueryDocumentSnapshot<Map<String,dynamic>>> documentsVehicles = querySnapshotVehicle.docs;
-      for(final documentsVehicle in  documentsVehicles) {
+      
+      
+      List vehicleModel = documentsUsersVehicles.where((usersVehicle) => (documentsServiceOrder.data() as dynamic)['vehicleId'] == usersVehicle["vehicleId"] ).toList();
 
-        
-        serviceOrderWithVehicle.add(ServiceOrderWithVehicle.fromJson({
-          "vehicleModel": documentsVehicle.data(),
-          "serviceOrderModel":documentsServiceOrder.data()
-        }));
-
+      if(vehicleModel.isEmpty){
+        _suggestionStreamControlerServiceOrder.add(serviceOrderWithVehicle);
+        return true;
       }
+      
+      serviceOrderWithVehicle.add(ServiceOrderWithVehicleModel.fromJson({
+        "vehicleModel": vehicleModel.first.data(),
+        "serviceOrderModel":documentsServiceOrder.data()
+      }));
     }
     _suggestionStreamControlerServiceOrder.add(serviceOrderWithVehicle);
-    return dataFinish;
+    return dataFinish;   
   }
 
 }

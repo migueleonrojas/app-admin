@@ -2,26 +2,33 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:oilappadmin/model/model_vehicle_model.dart';
 
       
-class ServiceOrderWithVehicle {
+class ServiceOrderWithVehicleModel {
   Map<String, dynamic>? vehicleModel;
   Map<String, dynamic>? serviceOrderModel;
 
   
   
-  ServiceOrderWithVehicle({
+  ServiceOrderWithVehicleModel({
     this.vehicleModel,
     this.serviceOrderModel,
   });
 
-  ServiceOrderWithVehicle.fromJson(Map<String, dynamic> json) {
+  ServiceOrderWithVehicleModel.fromJson(Map<String, dynamic> json) {
     vehicleModel = json['vehicleModel'];
     serviceOrderModel = json['serviceOrderModel'];
     
   }
-  /* ModelVehicleWithBrand.fromSnaphot(DocumentSnapshot snapshot) {
-    brandName = (snapshot.data() as dynamic)['id'];
-    year = (snapshot.data() as dynamic)['year'];
-  } */
+
+  ServiceOrderWithVehicleModel.fromSnaphot(DocumentSnapshot snapshot) {
+    vehicleModel = (snapshot.data() as dynamic)['vehicleModel'];
+    serviceOrderModel = (snapshot.data() as dynamic)['serviceOrderModel'];
+  }
+
+  /* serviceOrderWithVehicle.add(ServiceOrderWithVehicle.fromJson({
+        "vehicleModel": vehicleModel.first.data(),
+        "serviceOrderModel":documentsServiceOrder.data()
+      })); */
+
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['vehicleModel'] = this.vehicleModel;
