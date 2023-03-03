@@ -4,6 +4,7 @@ import 'package:oilappadmin/model/service_order_with_vehicles_model.dart';
 import 'package:oilappadmin/model/user_model.dart';
 import 'package:oilappadmin/model/users_vehicles_model.dart';
 import 'package:oilappadmin/screens/main_screen.dart';
+import 'package:oilappadmin/screens/service_order_search.dart';
 import 'package:oilappadmin/screens/user_service_details.dart';
 import 'package:oilappadmin/services/services_order_service.dart';
 import 'package:oilappadmin/widgets/emptycardmessage.dart';
@@ -84,7 +85,17 @@ class _ServiceOrdersByUserState extends State<ServiceOrdersByUser> {
               size: 30,
               color: Colors.black,
             ), 
-          )
+          ),
+          IconButton(
+            icon: const Icon(
+              Icons.search_outlined,
+            ),
+            onPressed: () {
+              showSearch(context: context, delegate: ServiceOrderSearch());
+              /* Route route = MaterialPageRoute(builder: (_) => ServiceOrderSearch());
+              Navigator.push(context, route); */
+            },
+          ),
         ],
       ),
       body: SingleChildScrollView(

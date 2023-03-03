@@ -1,188 +1,71 @@
-import 'package:oilappadmin/model/product_model.dart';
-import 'package:oilappadmin/model/service_order_model.dart';
-import 'package:oilappadmin/model/service_order_with_vehicles_model.dart';
-import 'package:oilappadmin/model/user_model.dart';
-import 'package:oilappadmin/model/users_vehicles_model.dart';
-import 'package:oilappadmin/screens/edit_product.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/material.dart';
+
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:oilappadmin/model/service_order_model.dart';
+import 'package:oilappadmin/model/service_order_with_vehicles_model.dart';
+import 'package:oilappadmin/model/users_vehicles_model.dart';
 import 'package:oilappadmin/screens/user_service_details.dart';
-import 'package:timeago/timeago.dart' as timeago;
-import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
-import 'package:oilappadmin/screens/edit_user.dart';
-import 'package:oilappadmin/screens/main_screen.dart';
 import 'package:oilappadmin/services/services_order_service.dart';
+import 'package:oilappadmin/widgets/emptycardmessage.dart';
+import 'package:oilappadmin/widgets/loading_widget.dart';
+import 'package:timeago/timeago.dart' as timeago;
+class ServiceOrderSearch extends SearchDelegate {
 
-class ServiceOrderSearch extends StatefulWidget {
   @override
-  _ServiceOrderSearchState createState() => _ServiceOrderSearchState();
-}
+  String get searchFieldLabel => 'Buscar Ordenes de Servicio';
 
-class _ServiceOrderSearchState extends State<ServiceOrderSearch> {
-  final searchServiceOrderController = TextEditingController();
-
-  List _allServiceOrderResults = [];
-  List _serviceOrderResultList = [];
-  List _serviceOrdersFiltered = [];
-  Future? serviceOrdersResultsLoaded;
-  ServiceOrdersService serviceOrdersService = ServiceOrdersService();
   @override
-  void initState() {
-    searchServiceOrderController.addListener(_onServiceOrderSearchChanged);
-    super.initState();
+  List<Widget>? buildActions(BuildContext context) {
+    return[
+      IconButton(
+        icon: Icon( Icons.clear),
+        onPressed: () => query = '',
+      )
+    ];
   }
 
   @override
-  void dispose() {
-    searchServiceOrderController.removeListener(_onServiceOrderSearchChanged);
-    searchServiceOrderController.dispose();
-    super.dispose();
-  }
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    serviceOrdersResultsLoaded = getAllSearchServiceOrdersData();
-  }
-
-  _onServiceOrderSearchChanged() {
-    searchServiceOrdersResultsList();
-  }
-
-  searchServiceOrdersResultsList() async {
-    serviceOrdersService.setEmptyServiceOrderWithVehicleList();
-    await serviceOrdersService.getServiceOrderWithVehicle(useLimit: false, orderId: searchServiceOrderController.text);
-    var data = serviceOrdersService.serviceOrderWithVehicle;
+  Widget? buildLeading(BuildContext context) {
     
-    if(mounted){
-      setState(() {
-      _allServiceOrderResults = data;
-      });
-    }
-    var showResult = [];
-    if (searchServiceOrderController.text != "") {
-      for (var userfromjson in _allServiceOrderResults) {
-        /* String username = UserModel.fromSnaphot(userfromjson).name!.toLowerCase();
-        String email = UserModel.fromSnaphot(userfromjson).email!.toLowerCase();
-        String phone = UserModel.fromSnaphot(userfromjson).phone!.toLowerCase();
-        String address = UserModel.fromSnaphot(userfromjson).address!.toLowerCase();
-
-        if (username.contains(searchServiceOrderController.text.toLowerCase())) {
-          showResult.add(userfromjson);
-        }
-        else if (email.contains(searchServiceOrderController.text.toLowerCase())) {
-          showResult.add(userfromjson);
-        }
-        else if (phone.contains(searchServiceOrderController.text.toLowerCase().replaceFirst('0', ''))) {
-          showResult.add(userfromjson);
-        }
-        else if (address.contains(searchServiceOrderController.text.toLowerCase().replaceFirst('0', ''))) {
-          showResult.add(userfromjson);
-        } */
-        showResult.add(userfromjson);
-
-      }
-    } else {
-      showResult = List.from(_allServiceOrderResults);
-    }
-    _serviceOrderResultList = showResult;
-    _serviceOrdersFiltered = _serviceOrderResultList;
-  }
-
-  getAllSearchServiceOrdersData() async {
-    await serviceOrdersService.getServiceOrderWithVehicle(useLimit: false, orderId: searchServiceOrderController.text);
-    var data = serviceOrdersService.serviceOrderWithVehicle;
-    if(mounted){
-      setState(() {
-      _allServiceOrderResults = data;
-      });
-    }
-    searchServiceOrdersResultsList();
-    return "Completo";
   }
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        title: TextField(
-          onChanged: (searchProductController) {
-            if(mounted){
-              setState(() {
-                searchProductController;
-              });
-            }
-          },
-          style: TextStyle(
-            color: Colors.black,
-            fontSize: 18,
-            fontWeight: FontWeight.w600,
-          ),
-          controller: searchServiceOrderController,
-          decoration: InputDecoration(
-            contentPadding: EdgeInsets.symmetric(
-              vertical: 15.0,
-              horizontal: 0,
-            ),
-            hintText: 'Buscar Usuarios...',
-            hintStyle: TextStyle(
-              color: Colors.blueGrey,
-              fontSize: 18,
-              fontWeight: FontWeight.w600,
-            ),
-            border: InputBorder.none,
-          ),
-        ),
-        leading: IconButton(
-          icon: Icon(
-            Icons.arrow_back,
-            color: Colors.black,
-          ),
-          onPressed: () {
-            Navigator.pop(context);
-            // Route route = MaterialPageRoute(builder: (_) => Products());
-            // Navigator.pushReplacement(context, route);
-          },
-        ),
-        actions: [
-          IconButton(
-            icon: Icon(
-              Icons.clear,
-              color: Colors.black,
-            ),
-            onPressed: () {
-              searchServiceOrderController.text = "";
-            },
-          ),
-          TextButton(
-            onPressed: ()  {
-              Route route = MaterialPageRoute(builder: (_) => MainScreen());
-              Navigator.pushAndRemoveUntil(context, route, (route) => false);
-            }, 
-            child: const Icon(
-              Icons.home,
-              size: 30,
-              color: Colors.black,
-            ), 
-          )
-        ],
-      ),
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            Container(
-              width: double.infinity,
-              child: ListView.builder(
+  Widget buildResults(BuildContext context) {
+
+    if(query.isEmpty) {
+      return EmptyCardMessage(
+        listTitle: 'No hay resultados',
+        message: 'No hay resultados',
+      );
+    }
+
+    ServiceOrdersService serviceOrdersService = ServiceOrdersService();
+
+    serviceOrdersService.getSuggestionsByQuery({
+      "useLimit":false,
+      "orderId": query
+    });
+
+    return StreamBuilder(
+      stream: serviceOrdersService.suggestionStreamServiceOrder,
+      builder: (_, AsyncSnapshot snapshot){
+        if( !snapshot.hasData ) return circularProgress();
+
+        if(snapshot.data!.isEmpty){
+          return const EmptyCardMessage(
+            listTitle: 'No hay Ordenes actualmente',
+            message: 'No hay Ordenes por lo momentos',
+          );
+        }
+
+        return ListView.builder(
                 shrinkWrap: true,
                 physics: NeverScrollableScrollPhysics(),
                 scrollDirection: Axis.vertical,                
-                itemCount: _serviceOrdersFiltered.length,
+                itemCount: snapshot.data.length,
                 itemBuilder: (BuildContext context, int index) {
                   
-                  final serviceOrderWithVehicle = _serviceOrdersFiltered[index];
+                  final serviceOrderWithVehicle = snapshot.data[index];
 
                   ServiceOrderWithVehicleModel seviceOrderWithVehicleModel = ServiceOrderWithVehicleModel.fromJson(
                       serviceOrderWithVehicle.toJson()
@@ -198,19 +81,85 @@ class _ServiceOrderSearchState extends State<ServiceOrderSearch> {
 
 
                   return OrderBody(
-                    itemCount: _serviceOrdersFiltered.length,
+                    itemCount: snapshot.data.length,
                     data: serviceOrderModel,
                     vehicleModel: usersVehiclesModel,    
                   );
                   
                 },
-              ),
-            ),
-          ],
-        ),
-      ),
+        );
+
+      }
+    );
+
+
+  }
+
+  @override
+  Widget buildSuggestions(BuildContext context) {
+    if(query.isEmpty) {
+      return EmptyCardMessage(
+        listTitle: 'No hay resultados',
+        message: 'No hay resultados',
+      );
+    }
+
+    ServiceOrdersService serviceOrdersService = ServiceOrdersService();
+    if(query.isNotEmpty){
+      serviceOrdersService.getSuggestionsByQuery({
+      "useLimit":false,
+      "orderId": query
+    });
+    }
+    
+
+    return StreamBuilder(
+      stream: serviceOrdersService.suggestionStreamServiceOrder,
+      builder: (_, AsyncSnapshot snapshot){
+        if( !snapshot.hasData ) return circularProgress();
+
+        if(snapshot.data!.isEmpty){
+          return const EmptyCardMessage(
+            listTitle: 'No hay Ordenes actualmente',
+            message: 'No hay Ordenes por lo momentos',
+          );
+        }
+
+        return ListView.builder(
+                shrinkWrap: true,
+                physics: NeverScrollableScrollPhysics(),
+                scrollDirection: Axis.vertical,                
+                itemCount: snapshot.data.length,
+                itemBuilder: (BuildContext context, int index) {
+                  
+                  final serviceOrderWithVehicle = snapshot.data[index];
+
+                  ServiceOrderWithVehicleModel seviceOrderWithVehicleModel = ServiceOrderWithVehicleModel.fromJson(
+                      serviceOrderWithVehicle.toJson()
+                  );
+
+                  UsersVehiclesModel usersVehiclesModel = UsersVehiclesModel.fromJson(
+                    seviceOrderWithVehicleModel.vehicleModel!
+                  );
+
+                  ServiceOrderModel serviceOrderModel = ServiceOrderModel.fromJson(
+                    seviceOrderWithVehicleModel.serviceOrderModel!
+                  );
+
+
+                  return OrderBody(
+                    itemCount: snapshot.data.length,
+                    data: serviceOrderModel,
+                    vehicleModel: usersVehiclesModel,    
+                  );
+                  
+                },
+        );
+
+      }
     );
   }
+
 }
 
 class OrderBody extends StatelessWidget {

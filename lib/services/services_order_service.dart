@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:oilappadmin/Helper/debouncer.dart';
 import 'package:oilappadmin/model/service_order_with_vehicles_model.dart';
 
 class ServiceOrdersService {
@@ -11,11 +12,15 @@ class ServiceOrdersService {
   QuerySnapshot? collectionState;
   bool dataFinish = false;
 
+  final debouncer = Debouncer(
+    duration: Duration(milliseconds: 500 ),
+  );
+
   setEmptyServiceOrderWithVehicleList(){
     serviceOrderWithVehicle = [];
   }
   
-  Future <bool>  getServiceOrderWithVehicle({int limit = 5, bool nextDocument = false, String userId = "", bool useLimit = true, String orderId = ''}) async {
+  Future <dynamic> getServiceOrderWithVehicle({int limit = 5, bool nextDocument = false, String userId = "", bool useLimit = true, String orderId = ''}) async {
 
     QuerySnapshot<Map<String, dynamic>>? querySnapshotServiceOrder;
     QuerySnapshot<Map<String, dynamic>>? collectionOrders;
@@ -54,9 +59,17 @@ class ServiceOrdersService {
           
           collection = FirebaseFirestore.instance
           .collection('serviceOrder')
+          /* .where(
+            'orderId',
+            isGreaterThanOrEqualTo: orderId,
+            isLessThan: orderId.substring(0, orderId.length - 1) +
+            String.fromCharCode(orderId.codeUnitAt(orderId.length - 1) + 1)
+          ) */
           .where('orderId',isEqualTo: orderId)
+          
           .orderBy("orderTime", descending: true);
           /* .where('orderId',isEqualTo: orderId); */
+          /* 1677 5396 0279 8633 */
           
         }
         
@@ -111,10 +124,12 @@ class ServiceOrdersService {
         collectionState = values; 
       });
 
-      querySnapshotServiceOrder = await collection.get();  
+      
+
+      querySnapshotServiceOrder = await collection.get();
       
     }
-
+  
     List<QueryDocumentSnapshot<Map<String,dynamic>>> documentsServiceOrders = querySnapshotServiceOrder.docs;
     QuerySnapshot<Map<String, dynamic>> querySnapshotUsersVehicles = await FirebaseFirestore.instance.collection('usersVehicles').get();
     List<QueryDocumentSnapshot<Map<String,dynamic>>> documentsUsersVehicles = querySnapshotUsersVehicles.docs;
@@ -134,8 +149,43 @@ class ServiceOrdersService {
         "serviceOrderModel":documentsServiceOrder.data()
       }));
     }
+    
+    
+   
+
+    if(!useLimit) return serviceOrderWithVehicle;
+
     _suggestionStreamControlerServiceOrder.add(serviceOrderWithVehicle);
+      
+    
     return dataFinish;   
   }
+
+  getSuggestionsByQuery(Map<String, dynamic> searchTerm) async {
+
+    debouncer.value = '';
+
+    //metodo que se manda a llamar cuando se pase las 500 milesimas de segundo
+    debouncer.onValue = (value) async {
+
+      //print('Tenemos valor a buscar: $value');
+      /* final results = await searchMovies(value); */
+      
+      final  results = await getServiceOrderWithVehicle(useLimit: searchTerm['useLimit'], orderId: searchTerm['orderId']);
+
+      _suggestionStreamControlerServiceOrder.add(results);//indicarle a Stream que hay nuevo valor
+
+      
+
+    };
+
+    final timer = Timer.periodic(const Duration(milliseconds: 300), (_) {
+      debouncer.value = searchTerm;
+    });
+
+    Future.delayed(const Duration(milliseconds: 301)).then((_) => timer.cancel());
+
+  }
+
 
 }

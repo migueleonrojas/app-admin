@@ -86,8 +86,9 @@ class _ServiceOrdersState extends State<ServiceOrders> {
               Icons.search_outlined,
             ),
             onPressed: () {
-              Route route = MaterialPageRoute(builder: (_) => ServiceOrderSearch());
-              Navigator.push(context, route);
+              showSearch(context: context, delegate: ServiceOrderSearch());
+              /* Route route = MaterialPageRoute(builder: (_) => ServiceOrderSearch());
+              Navigator.push(context, route); */
             },
           ),
         ],
