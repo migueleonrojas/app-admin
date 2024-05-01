@@ -307,7 +307,15 @@ class _EditServiceState extends State<EditService> {
                   ),
                   const SizedBox(height: 20),
                   ElevatedButton(
-                    child: const Text('Actualizar Servicio'),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.black
+                    ),
+                    child: const Text(
+                      'Actualizar Servicio',
+                      style: TextStyle(
+                        color: Colors.white
+                      ),
+                    ),
                     onPressed: () async {
                       if (aboutInfoController.text.isNotEmpty &&
                           serviceNameController.text.isNotEmpty &&
@@ -339,6 +347,9 @@ class _EditServiceState extends State<EditService> {
                     },
                   ),
                   ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.black
+                    ),
                     /* color: Colors.redAccent, */
                     child: const Text(
                       'Eliminar Servicio',

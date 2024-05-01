@@ -307,7 +307,15 @@ class _EditProductState extends State<EditProduct> {
                   ),
                   const SizedBox(height: 20),
                   ElevatedButton(
-                    child: const Text('Actualizar Producto'),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.black
+                    ),
+                    child: const Text(
+                      'Actualizar Producto',
+                      style: TextStyle(
+                        color: Colors.white
+                      ),
+                    ),
                     onPressed: () async {
                       if (shortInfoController.text.isNotEmpty &&
                           productNameController.text.isNotEmpty &&
@@ -341,6 +349,9 @@ class _EditProductState extends State<EditProduct> {
                     },
                   ),
                   ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.black
+                    ),
                     /* color: Colors.redAccent, */
                     child: const Text(
                       'Eliminar Producto',

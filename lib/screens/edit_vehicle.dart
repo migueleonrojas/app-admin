@@ -8,6 +8,7 @@ import 'package:oilappadmin/model/vehicle_model.dart';
 import 'package:oilappadmin/screens/add_brand.dart';
 import 'package:oilappadmin/screens/add_model.dart';
 import 'package:oilappadmin/screens/add_year.dart';
+import 'package:oilappadmin/screens/allvehicles_by_user.dart';
 import 'package:oilappadmin/screens/carNotes.dart';
 import 'package:oilappadmin/screens/main_screen.dart';
 import 'package:oilappadmin/screens/services.dart';
@@ -401,7 +402,15 @@ class _EditVehicleState extends State<EditVehicle> {
                   ), */
                   SizedBox(height: 20),
                   ElevatedButton(
-                    child: const Text('Actualizar Vehiculo'),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.black
+                    ),
+                    child: const Text(
+                      'Actualizar Vehiculo',
+                      style: TextStyle(
+                        color: Colors.white
+                      ),
+                    ),
                     onPressed: () async {
                       if (brandController.text.isNotEmpty &&
                           modelController.text.isNotEmpty &&
@@ -413,8 +422,17 @@ class _EditVehicleState extends State<EditVehicle> {
                           updateVehicle();
                           Fluttertoast.showToast(
                             msg: 'Vehiculo actualizado exitosamente');
-                          Navigator.pushReplacement(context,
-                            MaterialPageRoute(builder: (_) => Vehicles()));
+                          Navigator.pushAndRemoveUntil(
+                          context, 
+                          MaterialPageRoute(
+                            builder: (_) => AllVehiclesByUser(
+                              indexTab: 0, 
+                              userModel: widget.userModel,
+                            )
+                          ), 
+                          (route) => false
+                        );
+
                         }
 
                         
@@ -430,6 +448,9 @@ class _EditVehicleState extends State<EditVehicle> {
                     },
                   ),
                   ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.black
+                    ),
                     /* color: Colors.redAccent, */
                     child: const Text(
                       'Eliminar Vehiculo',
@@ -438,14 +459,24 @@ class _EditVehicleState extends State<EditVehicle> {
                       ),
                     ),
                     onPressed: () async {
-                      bool confirm = await _confirm("De que quiere actualizar el vehiculo");
+                      bool confirm = await _confirm("De que quiere Eliminar el vehiculo");
                       if(confirm){
 
                         deleteVehicle();
                         Fluttertoast.showToast(
                           msg: 'Vehiculo eliminado exitosamente');
-                        Navigator.pushReplacement(context,
-                          MaterialPageRoute(builder: (_) => Vehicles()));
+                        Navigator.pushAndRemoveUntil(
+                          context, 
+                          MaterialPageRoute(
+                            builder: (_) => AllVehiclesByUser(
+                              indexTab: 0, 
+                              userModel: widget.userModel,
+                            )
+                          ), 
+                          (route) => false
+                        );
+                        /* Navigator.pushReplacement(context,
+                          MaterialPageRoute(builder: (_) => MainScreen(indexTab: 0))); */
 
                       }
                       
@@ -454,6 +485,9 @@ class _EditVehicleState extends State<EditVehicle> {
                   SizedBox(height: 5),
                   if(widget.userModel != null)
                   ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.black
+                    ),
                     onPressed: () {
                       Navigator.push(
                         context,
@@ -562,7 +596,7 @@ class _EditVehicleState extends State<EditVehicle> {
   deleteVehicleForAdmin(){
     FirebaseFirestore.instance.collection('usersVehicles')
       .doc(widget.vehicleModel!.vehicleId)
-      .delete();
+      .delete().whenComplete(() => null);
   }
   
   Future<bool> _confirm(String msg) async {

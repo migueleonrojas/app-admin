@@ -401,7 +401,15 @@ class _EditMotorcycleState extends State<EditMotorcycle> {
                   ), */
                   SizedBox(height: 20),
                   ElevatedButton(
-                    child: const Text('Actualizar Vehiculo'),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.black
+                    ),
+                    child: const Text(
+                      'Actualizar Vehiculo',
+                      style: TextStyle(
+                        color: Colors.white
+                      ),
+                    ),
                     onPressed: () async {
                       if (brandController.text.isNotEmpty &&
                           modelController.text.isNotEmpty &&
@@ -430,6 +438,9 @@ class _EditMotorcycleState extends State<EditMotorcycle> {
                     },
                   ),
                   ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.black
+                    ),
                     /* color: Colors.redAccent, */
                     child: const Text(
                       'Eliminar Vehiculo',
@@ -454,6 +465,9 @@ class _EditMotorcycleState extends State<EditMotorcycle> {
                   SizedBox(height: 5),
                   if(widget.userModel != null)
                   ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.black
+                    ),
                     onPressed: () {
                       Navigator.pushReplacement(
                         context,

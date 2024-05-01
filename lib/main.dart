@@ -1,4 +1,5 @@
 import 'package:oilappadmin/config/config.dart';
+import 'package:oilappadmin/firebase_options.dart';
 import 'package:oilappadmin/screens/main_screen.dart';
 import 'package:oilappadmin/screens/splash_screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -7,12 +8,24 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:firebase_app_check/firebase_app_check.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
+import 'dart:io' as io;
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(
-    
-  );
+  if(kIsWeb){
+    await Firebase.initializeApp(
+      name: 'globaloiladmin',
+      options: DefaultFirebaseOptions.web
+    );
+  }
+  else if(!kIsWeb && io.Platform.isAndroid){
+    await Firebase.initializeApp(
+      name: 'globaloiladmin',
+      options: DefaultFirebaseOptions.android
+    );
+  }
+  
   AutoParts.auth = FirebaseAuth.instance;
   AutoParts.sharedPreferences = await SharedPreferences.getInstance();
   AutoParts.firebaseAppCheck = FirebaseAppCheck.instance;
@@ -34,7 +47,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         
         primaryColor: Colors.deepOrange,
-        accentColor: Colors.deepOrangeAccent,
+        /* accentColor: Colors.deepOrangeAccent, */
         visualDensity: VisualDensity.adaptivePlatformDensity,
         appBarTheme: const AppBarTheme(
           elevation: 0,

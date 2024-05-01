@@ -14,11 +14,13 @@ class LoginHelper {
   Widget welcomeText() {
     return const Text(
       "Bienvenido Administrador!",
+      textAlign: TextAlign.center,
       style:  TextStyle(
         fontSize: 30,
         fontFamily: 'Brand-Bold',
         letterSpacing: 1,
         fontWeight: FontWeight.bold,
+        
       ),
     );
   }
@@ -27,7 +29,7 @@ class LoginHelper {
     return const Padding(
       padding:  EdgeInsets.symmetric(horizontal: 16.0),
       child:  Text(
-        "Inicie sesión en su cuenta existente de Global Oil",
+        "Inicie sesión en su cuenta existente.",
         textAlign: TextAlign.center,
         style: TextStyle(
           fontSize: 18,

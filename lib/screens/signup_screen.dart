@@ -68,7 +68,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
               const Padding(
                 padding:  EdgeInsets.symmetric(horizontal: 16.0),
                 child:  Text(
-                  "Cree una cuenta en GlobalOil para obtener todas las funciones",
+                  "Cree una cuenta para obtener todas las funciones",
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontSize: 20,
@@ -340,15 +340,15 @@ class _SignUpScreenState extends State<SignUpScreen> {
       "uid": fUser.uid,
       "email": fUser.email,
       "name": _nameTextEditingController.text.trim(),
-      "phone": '584125853626',
+      "phone": '',
       "address": "Venezuela",
-      "url": (userImage.isNotEmpty)? userImage : "https://firebasestorage.googleapis.com/v0/b/oildatabase-781a4.appspot.com/o/no-image-user.png?alt=media&token=012134ea-3488-4061-ab18-a9f4196b202c",
+      "url": (userImage.isNotEmpty)? userImage : "",
     });
     await AutoParts.sharedPreferences!.setString("uid", fUser.uid);
     await AutoParts.sharedPreferences!.setString(AutoParts.userEmail, fUser.email!);
     await AutoParts.sharedPreferences!.setString(AutoParts.userName, _nameTextEditingController.text);
-    await AutoParts.sharedPreferences!.setString(AutoParts.userPhone, '584125853626');
-    await AutoParts.sharedPreferences!.setString(AutoParts.userAddress, 'migueleonrojas@gmail.com');
+    await AutoParts.sharedPreferences!.setString(AutoParts.userPhone, '');
+    await AutoParts.sharedPreferences!.setString(AutoParts.userAddress, 'Venezuela');
     await AutoParts.sharedPreferences!.setString(AutoParts.userAvatarUrl, userImage);
     
   }

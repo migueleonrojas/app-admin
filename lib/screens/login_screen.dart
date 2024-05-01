@@ -99,6 +99,19 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                   /* color: Theme.of(context).primaryColor, */
                   onPressed: () async {
+
+                    if(_emailTextEditingController.text == '') {
+                      showSnackBar("El correo esta vacio");
+                      return;
+                    }
+
+                    if(_adminPasswordTextEditingController.text == '') {
+                      showSnackBar("La contraseña esta vacia");
+                      return;
+                    }
+
+                    /*   final _emailTextEditingController = TextEditingController();
+                    final _adminPasswordTextEditingController = TextEditingController(); */
                     //-------------Internet Connectivity--------------------//
 
                     var connectivityResult =

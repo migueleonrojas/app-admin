@@ -119,6 +119,7 @@ class _AddMotorcycleState extends State<AddMotorcycle> {
           child: Column(
             children: [
               DropdownButtonFormField(
+                isExpanded: true,
                 hint: const Text('Selecciona Marca del Vehiculo'),
                 items: 
                   brands.map((e) {

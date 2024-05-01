@@ -262,204 +262,201 @@ class _UserOrderDetailsState extends State<UserOrderDetails> {
                             child: Container(
                               height: 500,
                               width: double.infinity,
-                              child: Padding(
-                                padding: const EdgeInsets.all(14.0),
-                                child: Column(
-                                  children: [
-                                    Row(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Column(
+                              child: Column(
+                                children: [
+                                  Row(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Column(
+                                        children: [
+                                          IconDoneOrNotDone(
+                                            isdone: ((snapshot.data!.docs[index] as dynamic)
+                                                            .data()[
+                                                        'orderRecived'] ==
+                                                    'Done')
+                                                ? true
+                                                : false,
+                                          ),
+                                          dividerBetweenDoneIcon(
+                                            ((snapshot.data!.docs[index] as dynamic).data()[
+                                                        'beingPrePared'] ==
+                                                    'Done')
+                                                ? true
+                                                : false,
+                                            ((snapshot.data!.docs[index] as dynamic).data()[
+                                                        'beingPrePared'] ==
+                                                    'Done')
+                                                ? true
+                                                : false,
+                                          ),
+                                          IconDoneOrNotDone(
+                                            isdone: ((snapshot.data!.docs[index] as dynamic)
+                                                            .data()[
+                                                        'beingPrePared'] ==
+                                                    'Done')
+                                                ? true
+                                                : false,
+                                          ),
+                                          dividerBetweenDoneIcon(
+                                            ((snapshot.data!.docs[index] as dynamic)
+                                                        .data()['onTheWay'] ==
+                                                    'Done')
+                                                ? true
+                                                : false,
+                                            ((snapshot.data!.docs[index] as dynamic)
+                                                        .data()['onTheWay'] ==
+                                                    'Done')
+                                                ? true
+                                                : false,
+                                          ),
+                                          IconDoneOrNotDone(
+                                            isdone: ((snapshot.data!.docs[index] as dynamic)
+                                                        .data()['onTheWay'] ==
+                                                    'Done')
+                                                ? true
+                                                : false,
+                                          ),
+                                          dividerBetweenDoneIcon(
+                                            ((snapshot.data!.docs[index] as dynamic)
+                                                        .data()['deliverd'] ==
+                                                    'Done')
+                                                ? true
+                                                : false,
+                                            ((snapshot.data!.docs[index] as dynamic)
+                                                        .data()['deliverd'] ==
+                                                    'Done')
+                                                ? true
+                                                : false,
+                                          ),
+                                          IconDoneOrNotDone(
+                                            isdone: ((snapshot.data!.docs[index] as dynamic)
+                                                        .data()['deliverd'] ==
+                                                    'Done')
+                                                ? true
+                                                : false,
+                                          ),
+                                        ],
+                                      ),
+                                     
+                                     
+                                      SizedBox(width: 20),
+                                      Expanded(
+                                        child: Column(
                                           children: [
-                                            IconDoneOrNotDone(
-                                              isdone: ((snapshot.data!.docs[index] as dynamic)
+                                            OrderStatusCard(
+                                              title: "Orden recibida",
+                                              isPressed: ((snapshot.data
+                                                              !.docs[index] as dynamic)
                                                               .data()[
                                                           'orderRecived'] ==
-                                                      'Done')
+                                                      "Done")
                                                   ? true
                                                   : false,
+                                              onPressed: () {
+                                                OrderStatusService()
+                                                    .updateOrderRecived(
+                                                  (snapshot.data!.docs[index] as dynamic)
+                                                      .data()['orderId'],
+                                                );
+                                                Fluttertoast.showToast(
+                                                    msg: "Orden recibida");
+                                              },
+                                              time: DateFormat.yMMMd()
+                                                  .add_jm()
+                                                  .format(orderRecivedTime),
                                             ),
-                                            dividerBetweenDoneIcon(
-                                              ((snapshot.data!.docs[index] as dynamic).data()[
-                                                          'beingPrePared'] ==
-                                                      'Done')
-                                                  ? true
-                                                  : false,
-                                              ((snapshot.data!.docs[index] as dynamic).data()[
-                                                          'beingPrePared'] ==
-                                                      'Done')
-                                                  ? true
-                                                  : false,
-                                            ),
-                                            IconDoneOrNotDone(
-                                              isdone: ((snapshot.data!.docs[index] as dynamic)
+                                            SizedBox(height: 15),
+                                            OrderStatusCard(
+                                              title: "Esta preparado",
+                                              isPressed: ((snapshot.data!
+                                                              .docs[index] as dynamic)
                                                               .data()[
                                                           'beingPrePared'] ==
                                                       'Done')
                                                   ? true
                                                   : false,
+                                              onPressed: () {
+                                                OrderStatusService()
+                                                    .updateBeingPrePared(
+                                                  (snapshot.data!.docs[index] as dynamic)
+                                                      .data()['orderId'],
+                                                );
+                                                Fluttertoast.showToast(
+                                                    msg: "Esta preparado");
+                                              },
+                                              time: DateFormat.yMMMd()
+                                                  .add_jm()
+                                                  .format(beingPreParedTime),
                                             ),
-                                            dividerBetweenDoneIcon(
-                                              ((snapshot.data!.docs[index] as dynamic)
-                                                          .data()['onTheWay'] ==
+                                            SizedBox(height: 15),
+                                            OrderStatusCard(
+                                              title: "En camino",
+                                              isPressed: ((snapshot.data
+                                                              !.docs[index] as dynamic)
+                                                              .data()[
+                                                          'onTheWay'] ==
                                                       'Done')
                                                   ? true
                                                   : false,
-                                              ((snapshot.data!.docs[index] as dynamic)
-                                                          .data()['onTheWay'] ==
-                                                      'Done')
-                                                  ? true
-                                                  : false,
+                                              onPressed: () {
+                                                OrderStatusService()
+                                                    .updateOnTheWay(
+                                                  (snapshot.data!.docs[index] as dynamic)
+                                                      .data()['orderId'],
+                                                );
+                                                Fluttertoast.showToast(
+                                                    msg: "En Camino");
+                                              },
+                                              time: DateFormat.yMMMd()
+                                                  .add_jm()
+                                                  .format(onTheWayTime),
                                             ),
-                                            IconDoneOrNotDone(
-                                              isdone: ((snapshot.data!.docs[index] as dynamic)
-                                                          .data()['onTheWay'] ==
+                                            SizedBox(height: 15),
+                                            OrderStatusCard(
+                                              title: "Entregado",
+                                              isPressed: ((snapshot.data!
+                                                              .docs[index] as dynamic)
+                                                              .data()[
+                                                          'deliverd'] ==
                                                       'Done')
                                                   ? true
                                                   : false,
-                                            ),
-                                            dividerBetweenDoneIcon(
-                                              ((snapshot.data!.docs[index] as dynamic)
-                                                          .data()['deliverd'] ==
-                                                      'Done')
-                                                  ? true
-                                                  : false,
-                                              ((snapshot.data!.docs[index] as dynamic)
-                                                          .data()['deliverd'] ==
-                                                      'Done')
-                                                  ? true
-                                                  : false,
-                                            ),
-                                            IconDoneOrNotDone(
-                                              isdone: ((snapshot.data!.docs[index] as dynamic)
-                                                          .data()['deliverd'] ==
-                                                      'Done')
-                                                  ? true
-                                                  : false,
+                                              onPressed: () {
+                                                OrderStatusService()
+                                                    .updateDeliverd(
+                                                  (snapshot.data!.docs[index] as dynamic)
+                                                      .data()['orderId'],
+                                                );
+                                                Fluttertoast.showToast(
+                                                    msg: "Entregado");
+                                              },
+                                              time: DateFormat.yMMMd()
+                                                  .add_jm()
+                                                  .format(deliverdTime),
                                             ),
                                           ],
                                         ),
-                                       
-                                       
-                                        SizedBox(width: 20),
-                                        Expanded(
-                                          child: Column(
-                                            children: [
-                                              OrderStatusCard(
-                                                title: "Orden recibida",
-                                                isPressed: ((snapshot.data
-                                                                !.docs[index] as dynamic)
-                                                                .data()[
-                                                            'orderRecived'] ==
-                                                        "Done")
-                                                    ? true
-                                                    : false,
-                                                onPressed: () {
-                                                  OrderStatusService()
-                                                      .updateOrderRecived(
-                                                    (snapshot.data!.docs[index] as dynamic)
-                                                        .data()['orderId'],
-                                                  );
-                                                  Fluttertoast.showToast(
-                                                      msg: "Orden recibida");
-                                                },
-                                                time: DateFormat.yMMMd()
-                                                    .add_jm()
-                                                    .format(orderRecivedTime),
-                                              ),
-                                              SizedBox(height: 15),
-                                              OrderStatusCard(
-                                                title: "Esta preparado",
-                                                isPressed: ((snapshot.data!
-                                                                .docs[index] as dynamic)
-                                                                .data()[
-                                                            'beingPrePared'] ==
-                                                        'Done')
-                                                    ? true
-                                                    : false,
-                                                onPressed: () {
-                                                  OrderStatusService()
-                                                      .updateBeingPrePared(
-                                                    (snapshot.data!.docs[index] as dynamic)
-                                                        .data()['orderId'],
-                                                  );
-                                                  Fluttertoast.showToast(
-                                                      msg: "Esta preparado");
-                                                },
-                                                time: DateFormat.yMMMd()
-                                                    .add_jm()
-                                                    .format(beingPreParedTime),
-                                              ),
-                                              SizedBox(height: 15),
-                                              OrderStatusCard(
-                                                title: "En camino",
-                                                isPressed: ((snapshot.data
-                                                                !.docs[index] as dynamic)
-                                                                .data()[
-                                                            'onTheWay'] ==
-                                                        'Done')
-                                                    ? true
-                                                    : false,
-                                                onPressed: () {
-                                                  OrderStatusService()
-                                                      .updateOnTheWay(
-                                                    (snapshot.data!.docs[index] as dynamic)
-                                                        .data()['orderId'],
-                                                  );
-                                                  Fluttertoast.showToast(
-                                                      msg: "En Camino");
-                                                },
-                                                time: DateFormat.yMMMd()
-                                                    .add_jm()
-                                                    .format(onTheWayTime),
-                                              ),
-                                              SizedBox(height: 15),
-                                              OrderStatusCard(
-                                                title: "Entregado",
-                                                isPressed: ((snapshot.data!
-                                                                .docs[index] as dynamic)
-                                                                .data()[
-                                                            'deliverd'] ==
-                                                        'Done')
-                                                    ? true
-                                                    : false,
-                                                onPressed: () {
-                                                  OrderStatusService()
-                                                      .updateDeliverd(
-                                                    (snapshot.data!.docs[index] as dynamic)
-                                                        .data()['orderId'],
-                                                  );
-                                                  Fluttertoast.showToast(
-                                                      msg: "Entregado");
-                                                },
-                                                time: DateFormat.yMMMd()
-                                                    .add_jm()
-                                                    .format(deliverdTime),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                     
-                                     
-                                      ],
-                                    ),
-                                    SizedBox(height: 20),
-                                    Text(
-                                      ((snapshot.data!.docs[index] as dynamic)
-                                                  .data()['deliverd'] ==
-                                              'Done')
-                                          ? "¡¡Felicitaciones!!\nEl pedido ha sido entregado con éxito."
-                                          : "",
-                                      textAlign: TextAlign.center,
-                                      style: TextStyle(
-                                        color: Colors.deepOrangeAccent[200],
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.bold,
                                       ),
+                                   
+                                   
+                                    ],
+                                  ),
+                                  SizedBox(height: 20),
+                                  Text(
+                                    ((snapshot.data!.docs[index] as dynamic)
+                                                .data()['deliverd'] ==
+                                            'Done')
+                                        ? "¡¡Felicitaciones!!\nEl pedido ha sido entregado con éxito."
+                                        : "",
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                      color: Colors.deepOrangeAccent[200],
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold,
                                     ),
-                                  ],
-                                ),
+                                  ),
+                                ],
                               ),
                             ),
                           );
@@ -544,6 +541,9 @@ class OrderStatusCard extends StatelessWidget {
                   ],
                 )
               : ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.black
+                  ),
                   /* color: Colors.deepOrangeAccent[200],
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(8),

@@ -133,7 +133,10 @@ class _EditUserState extends State<EditUser> {
                     ),
                   ),
                   const SizedBox(height: 10),
-                  ElevatedButton(            
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.black
+                    ),      
                     onPressed: () {
                      Route route = MaterialPageRoute(builder: (c) => ControlOrdersByUser(userModel: widget.userModel!));
                       if(!mounted)return;
@@ -147,7 +150,10 @@ class _EditUserState extends State<EditUser> {
                     ),
                   ),
                   const SizedBox(height: 10),
-                  ElevatedButton(            
+                  ElevatedButton(         
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.black
+                    ),     
                     onPressed: () {
                      Route route = MaterialPageRoute(builder: (c) => ServiceOrdersByUser(userModel: widget.userModel!));
                       if(!mounted)return;
@@ -161,7 +167,10 @@ class _EditUserState extends State<EditUser> {
                     ),
                   ),
                   const SizedBox(height: 10),
-                  ElevatedButton(            
+                  ElevatedButton(    
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.black
+                    ),          
                     onPressed: () {
                      Route route = MaterialPageRoute(builder: (c) => AllVehiclesByUser(userModel: widget.userModel!));
                       if(!mounted)return;

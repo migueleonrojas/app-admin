@@ -294,7 +294,12 @@ class _EditCarNoteState extends State<EditCarNote> {
                         );
 
                       },
-                      child: const Text('Adjuntar Archivo'),
+                      child: const Text(
+                        'Adjuntar Archivo',
+                        style: TextStyle(
+                          color: Colors.white
+                        ),
+                      ),
                       style: ElevatedButton.styleFrom(
                         shape: const StadiumBorder(),
                         backgroundColor: Color.fromARGB(255, 3, 3, 247),

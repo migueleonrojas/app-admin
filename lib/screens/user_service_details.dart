@@ -657,299 +657,296 @@ class _UserServiceDetailsState extends State<UserServiceDetails> {
                                 child: Container(
                                   height: 600,
                                   width: double.infinity,
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(14.0),
-                                    child: Column(
-                                      children: [
-                                        Row(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Column(
+                                  child: Column(
+                                    children: [
+                                      Row(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Column(
+                                            children: [
+                                              IconDoneOrNotDone(
+                                                isdone: ((snapshot.data!.docs[index] as dynamic)
+                                                                .data()[
+                                                            'orderRecived'] ==
+                                                        'Done')
+                                                    ? true
+                                                    : false,
+                                              ),
+                                              dividerBetweenDoneIcon(
+                                                ((snapshot.data!.docs[index] as dynamic).data()[
+                                                            'beingPrePared'] ==
+                                                        'Done')
+                                                    ? true
+                                                    : false,
+                                                ((snapshot.data!.docs[index] as dynamic).data()[
+                                                            'beingPrePared'] ==
+                                                        'Done')
+                                                    ? true
+                                                    : false,
+                                              ),
+                                              IconDoneOrNotDone(
+                                                isdone: ((snapshot.data!.docs[index] as dynamic)
+                                                                .data()[
+                                                            'beingPrePared'] ==
+                                                        'Done')
+                                                    ? true
+                                                    : false,
+                                              ),
+                                              dividerBetweenDoneIcon(
+                                                ((snapshot.data!.docs[index] as dynamic)
+                                                            .data()['onTheWay'] ==
+                                                        'Done')
+                                                    ? true
+                                                    : false,
+                                                ((snapshot.data!.docs[index] as dynamic)
+                                                            .data()['onTheWay'] ==
+                                                        'Done')
+                                                    ? true
+                                                    : false,
+                                              ),
+                                              IconDoneOrNotDone(
+                                                isdone: ((snapshot.data!.docs[index] as dynamic)
+                                                            .data()['onTheWay'] ==
+                                                        'Done')
+                                                    ? true
+                                                    : false,
+                                              ),
+                                              dividerBetweenDoneIcon(
+                                                ((snapshot.data!.docs[index] as dynamic)
+                                                            .data()['deliverd'] ==
+                                                        'Done')
+                                                    ? true
+                                                    : false,
+                                                ((snapshot.data!.docs[index] as dynamic)
+                                                            .data()['deliverd'] ==
+                                                        'Done')
+                                                    ? true
+                                                    : false,
+                                              ),
+                                              IconDoneOrNotDone(
+                                                isdone: ((snapshot.data!.docs[index] as dynamic)
+                                                            .data()['deliverd'] ==
+                                                        'Done')
+                                                    ? true
+                                                    : false,
+                                              ),
+                                              /* dividerBetweenDoneIcon(
+                                                ((snapshot.data!.docs[index] as dynamic)
+                                                            .data()['orderCancelled'] ==
+                                                        'Done')
+                                                    ? true
+                                                    : false,
+                                                ((snapshot.data!.docs[index] as dynamic)
+                                                            .data()['orderCancelled'] ==
+                                                        'Done')
+                                                    ? true
+                                                    : false,
+                                              ), */
+                                              /* IconDoneOrNotDone(
+                                                isdone: ((snapshot.data!.docs[index] as dynamic)
+                                                            .data()['orderCancelled'] ==
+                                                        'Done')
+                                                    ? true
+                                                    : false,
+                                              ), */
+                                              
+                                            ],
+                                          ),
+                                          SizedBox(width: 20),
+                                          Expanded(
+                                            child: Column(
                                               children: [
-                                                IconDoneOrNotDone(
-                                                  isdone: ((snapshot.data!.docs[index] as dynamic)
+                                                OrderStatusCard(
+                                                  title: "Orden Recibida",
+                                                  isPressed: ((snapshot.data
+                                                                  !.docs[index] as dynamic)
                                                                   .data()[
                                                               'orderRecived'] ==
-                                                          'Done')
+                                                          "Done")
                                                       ? true
                                                       : false,
+                                                  onPressed: () async {
+                                                    bool confirm = await _onBackPressed('De que quieres cambiar el estatus de la orden');
+                                                      if(!confirm) return;
+                                                    if((snapshot.data!.docs[index] as dynamic)
+                                                        .data()['orderCancelled'] =='Done') {
+                                                      Fluttertoast.showToast(
+                                                        toastLength: Toast.LENGTH_LONG,
+                                                        msg: "No puede cambiar el estatus de una orden que esta cancelada"
+                                                      );
+                                                      return;
+                                                    }
+                                                    ServiceOrderStatusService()
+                                                        .updateOrderRecived(
+                                                      (snapshot.data!.docs[index] as dynamic)
+                                                          .data()['orderId'],
+                                                    );
+                                                    Fluttertoast.showToast(
+                                                        msg: "Orden Recibida");
+                                                  },
+                                                  time: DateFormat.yMMMd()
+                                                      .add_jm()
+                                                      .format(orderRecivedTime),
                                                 ),
-                                                dividerBetweenDoneIcon(
-                                                  ((snapshot.data!.docs[index] as dynamic).data()[
-                                                              'beingPrePared'] ==
-                                                          'Done')
-                                                      ? true
-                                                      : false,
-                                                  ((snapshot.data!.docs[index] as dynamic).data()[
-                                                              'beingPrePared'] ==
-                                                          'Done')
-                                                      ? true
-                                                      : false,
-                                                ),
-                                                IconDoneOrNotDone(
-                                                  isdone: ((snapshot.data!.docs[index] as dynamic)
+                                                SizedBox(height: 15),
+                                                OrderStatusCard(
+                                                  title: "Persona del servicio preparado",
+                                                  isPressed: ((snapshot.data!
+                                                                  .docs[index] as dynamic)
                                                                   .data()[
                                                               'beingPrePared'] ==
                                                           'Done')
                                                       ? true
                                                       : false,
+                                                  onPressed: () async {
+                                                    bool confirm = await _onBackPressed('De que quieres cambiar el estatus de la orden');
+                                                      if(!confirm) return;
+                                                    if((snapshot.data!.docs[index] as dynamic)
+                                                        .data()['orderCancelled'] =='Done') {
+                                                      
+                                                      Fluttertoast.showToast(
+                                                        toastLength: Toast.LENGTH_LONG,
+                                                        msg: "No puede cambiar el estatus de una orden que esta cancelada"
+                                                      );
+                                                      return;
+                                                    }
+                                                    ServiceOrderStatusService()
+                                                        .updateBeingPrePared(
+                                                      (snapshot.data!.docs[index] as dynamic)
+                                                          .data()['orderId'],
+                                                    );
+                                                    Fluttertoast.showToast(
+                                                        msg:
+                                                            "Persona del servicio preparado");
+                                                  },
+                                                  time: DateFormat.yMMMd()
+                                                      .add_jm()
+                                                      .format(beingPreParedTime),
                                                 ),
-                                                dividerBetweenDoneIcon(
-                                                  ((snapshot.data!.docs[index] as dynamic)
-                                                              .data()['onTheWay'] ==
+                                                SizedBox(height: 15),
+                                                OrderStatusCard(
+                                                  title: "En camino",
+                                                  isPressed: ((snapshot.data!
+                                                                  .docs[index] as dynamic)
+                                                                  .data()[
+                                                              'onTheWay'] ==
                                                           'Done')
                                                       ? true
                                                       : false,
-                                                  ((snapshot.data!.docs[index] as dynamic)
-                                                              .data()['onTheWay'] ==
-                                                          'Done')
-                                                      ? true
-                                                      : false,
+                                                  onPressed: () async {
+                                                    bool confirm = await _onBackPressed('De que quieres cambiar el estatus de la orden');
+                                                      if(!confirm) return;
+                                                    if((snapshot.data!.docs[index] as dynamic)
+                                                        .data()['orderCancelled'] =='Done') {
+                                                      Fluttertoast.showToast(
+                                                        toastLength: Toast.LENGTH_LONG,
+                                                        msg: "No puede cambiar el estatus de una orden que esta cancelada"
+                                                      );
+                                                      return;
+                                                    }
+                                                    ServiceOrderStatusService()
+                                                        .updateOnTheWay(
+                                                      (snapshot.data!.docs[index] as dynamic)
+                                                          .data()['orderId'],
+                                                    );
+                                                    Fluttertoast.showToast(
+                                                        msg: "En camino");
+                                                  },
+                                                  time: DateFormat.yMMMd()
+                                                      .add_jm()
+                                                      .format(onTheWayTime),
                                                 ),
-                                                IconDoneOrNotDone(
-                                                  isdone: ((snapshot.data!.docs[index] as dynamic)
-                                                              .data()['onTheWay'] ==
+                                                SizedBox(height: 15),
+                                                OrderStatusCard(
+                                                  title: "Servicio Completado",
+                                                  isPressed: ((snapshot.data!
+                                                                  .docs[index] as dynamic)
+                                                                  .data()[
+                                                              'deliverd'] ==
                                                           'Done')
                                                       ? true
                                                       : false,
+                                                  onPressed: () async {
+                                                    bool confirm = await _onBackPressed('De que quieres cambiar el estatus de la orden');
+                                                    if(!confirm) return;
+                                                    if((snapshot.data!.docs[index] as dynamic)
+                                                        .data()['orderCancelled'] =='Done') {
+                                                      Fluttertoast.showToast(
+                                                        toastLength: Toast.LENGTH_LONG,
+                                                        msg: "No puede cambiar el estatus de una orden que esta cancelada"
+                                                      );
+                                                      return;
+                                                    }
+                                                    bool restartInterval = await _restartIntervalVehicle();
+                                                    if(!restartInterval) return;
+                                                    ServiceOrderStatusService()
+                                                        .updateDeliverd(
+                                                      (snapshot.data!.docs[index] as dynamic)
+                                                          .data()['orderId'],
+                                                    );
+                                                    Fluttertoast.showToast(
+                                                        msg: "Servicio Completado");
+                                                  },
+                                                  time: DateFormat.yMMMd()
+                                                      .add_jm()
+                                                      .format(deliverdTime),
                                                 ),
-                                                dividerBetweenDoneIcon(
-                                                  ((snapshot.data!.docs[index] as dynamic)
-                                                              .data()['deliverd'] ==
+                                                 SizedBox(height: 15),
+                                                OrderStatusCard(
+                                                  title: ((snapshot.data!
+                                                                  .docs[index] as dynamic).data()[
+                                                              'orderCancelled'] ==
+                                                          'Done') ?"Servicio Cancelado":"¿Cancelar servicio?",
+                                                  isPressed: ((snapshot.data!
+                                                                  .docs[index] as dynamic)
+                                                                  .data()[
+                                                              'orderCancelled'] ==
                                                           'Done')
                                                       ? true
                                                       : false,
-                                                  ((snapshot.data!.docs[index] as dynamic)
-                                                              .data()['deliverd'] ==
-                                                          'Done')
-                                                      ? true
-                                                      : false,
+                                                  onPressed: () async {
+                                  
+                                  
+                                                    bool confirm = await _onBackPressed('De que quieres cancelar la orden');
+                                                    if(!confirm) return;
+                                                    if((snapshot.data!.docs[index] as dynamic)
+                                                        .data()['deliverd'] =='Done') {
+                                                      Fluttertoast.showToast(
+                                                        toastLength: Toast.LENGTH_LONG,
+                                                        msg: "No puede cancelar una orden que ya ha sido entregado"
+                                                      );
+                                                      return;
+                                                    }
+                                                    await ServiceOrderStatusService().cancelledOrder((snapshot.data!.docs[index] as dynamic)
+                                                                              .data()['orderId']);
+                                                    Fluttertoast.showToast(
+                                                        msg: "Servicio Cancelado");
+                                                  },
+                                                  time: DateFormat.yMMMd()
+                                                      .add_jm()
+                                                      .format(cancelledTime),
                                                 ),
-                                                IconDoneOrNotDone(
-                                                  isdone: ((snapshot.data!.docs[index] as dynamic)
-                                                              .data()['deliverd'] ==
-                                                          'Done')
-                                                      ? true
-                                                      : false,
-                                                ),
-                                                /* dividerBetweenDoneIcon(
-                                                  ((snapshot.data!.docs[index] as dynamic)
-                                                              .data()['orderCancelled'] ==
-                                                          'Done')
-                                                      ? true
-                                                      : false,
-                                                  ((snapshot.data!.docs[index] as dynamic)
-                                                              .data()['orderCancelled'] ==
-                                                          'Done')
-                                                      ? true
-                                                      : false,
-                                                ), */
-                                                /* IconDoneOrNotDone(
-                                                  isdone: ((snapshot.data!.docs[index] as dynamic)
-                                                              .data()['orderCancelled'] ==
-                                                          'Done')
-                                                      ? true
-                                                      : false,
-                                                ), */
-                                                
                                               ],
                                             ),
-                                            SizedBox(width: 20),
-                                            Expanded(
-                                              child: Column(
-                                                children: [
-                                                  OrderStatusCard(
-                                                    title: "Orden Recibida",
-                                                    isPressed: ((snapshot.data
-                                                                    !.docs[index] as dynamic)
-                                                                    .data()[
-                                                                'orderRecived'] ==
-                                                            "Done")
-                                                        ? true
-                                                        : false,
-                                                    onPressed: () async {
-                                                      bool confirm = await _onBackPressed('De que quieres cambiar el estatus de la orden');
-                                                        if(!confirm) return;
-                                                      if((snapshot.data!.docs[index] as dynamic)
-                                                          .data()['orderCancelled'] =='Done') {
-                                                        Fluttertoast.showToast(
-                                                          toastLength: Toast.LENGTH_LONG,
-                                                          msg: "No puede cambiar el estatus de una orden que esta cancelada"
-                                                        );
-                                                        return;
-                                                      }
-                                                      ServiceOrderStatusService()
-                                                          .updateOrderRecived(
-                                                        (snapshot.data!.docs[index] as dynamic)
-                                                            .data()['orderId'],
-                                                      );
-                                                      Fluttertoast.showToast(
-                                                          msg: "Orden Recibida");
-                                                    },
-                                                    time: DateFormat.yMMMd()
-                                                        .add_jm()
-                                                        .format(orderRecivedTime),
-                                                  ),
-                                                  SizedBox(height: 15),
-                                                  OrderStatusCard(
-                                                    title: "Persona del servicio preparado",
-                                                    isPressed: ((snapshot.data!
-                                                                    .docs[index] as dynamic)
-                                                                    .data()[
-                                                                'beingPrePared'] ==
-                                                            'Done')
-                                                        ? true
-                                                        : false,
-                                                    onPressed: () async {
-                                                      bool confirm = await _onBackPressed('De que quieres cambiar el estatus de la orden');
-                                                        if(!confirm) return;
-                                                      if((snapshot.data!.docs[index] as dynamic)
-                                                          .data()['orderCancelled'] =='Done') {
-                                                        
-                                                        Fluttertoast.showToast(
-                                                          toastLength: Toast.LENGTH_LONG,
-                                                          msg: "No puede cambiar el estatus de una orden que esta cancelada"
-                                                        );
-                                                        return;
-                                                      }
-                                                      ServiceOrderStatusService()
-                                                          .updateBeingPrePared(
-                                                        (snapshot.data!.docs[index] as dynamic)
-                                                            .data()['orderId'],
-                                                      );
-                                                      Fluttertoast.showToast(
-                                                          msg:
-                                                              "Persona del servicio preparado");
-                                                    },
-                                                    time: DateFormat.yMMMd()
-                                                        .add_jm()
-                                                        .format(beingPreParedTime),
-                                                  ),
-                                                  SizedBox(height: 15),
-                                                  OrderStatusCard(
-                                                    title: "En camino",
-                                                    isPressed: ((snapshot.data!
-                                                                    .docs[index] as dynamic)
-                                                                    .data()[
-                                                                'onTheWay'] ==
-                                                            'Done')
-                                                        ? true
-                                                        : false,
-                                                    onPressed: () async {
-                                                      bool confirm = await _onBackPressed('De que quieres cambiar el estatus de la orden');
-                                                        if(!confirm) return;
-                                                      if((snapshot.data!.docs[index] as dynamic)
-                                                          .data()['orderCancelled'] =='Done') {
-                                                        Fluttertoast.showToast(
-                                                          toastLength: Toast.LENGTH_LONG,
-                                                          msg: "No puede cambiar el estatus de una orden que esta cancelada"
-                                                        );
-                                                        return;
-                                                      }
-                                                      ServiceOrderStatusService()
-                                                          .updateOnTheWay(
-                                                        (snapshot.data!.docs[index] as dynamic)
-                                                            .data()['orderId'],
-                                                      );
-                                                      Fluttertoast.showToast(
-                                                          msg: "En camino");
-                                                    },
-                                                    time: DateFormat.yMMMd()
-                                                        .add_jm()
-                                                        .format(onTheWayTime),
-                                                  ),
-                                                  SizedBox(height: 15),
-                                                  OrderStatusCard(
-                                                    title: "Servicio Completado",
-                                                    isPressed: ((snapshot.data!
-                                                                    .docs[index] as dynamic)
-                                                                    .data()[
-                                                                'deliverd'] ==
-                                                            'Done')
-                                                        ? true
-                                                        : false,
-                                                    onPressed: () async {
-                                                      bool confirm = await _onBackPressed('De que quieres cambiar el estatus de la orden');
-                                                      if(!confirm) return;
-                                                      if((snapshot.data!.docs[index] as dynamic)
-                                                          .data()['orderCancelled'] =='Done') {
-                                                        Fluttertoast.showToast(
-                                                          toastLength: Toast.LENGTH_LONG,
-                                                          msg: "No puede cambiar el estatus de una orden que esta cancelada"
-                                                        );
-                                                        return;
-                                                      }
-                                                      bool restartInterval = await _restartIntervalVehicle();
-                                                      if(!restartInterval) return;
-                                                      ServiceOrderStatusService()
-                                                          .updateDeliverd(
-                                                        (snapshot.data!.docs[index] as dynamic)
-                                                            .data()['orderId'],
-                                                      );
-                                                      Fluttertoast.showToast(
-                                                          msg: "Servicio Completado");
-                                                    },
-                                                    time: DateFormat.yMMMd()
-                                                        .add_jm()
-                                                        .format(deliverdTime),
-                                                  ),
-                                                   SizedBox(height: 15),
-                                                  OrderStatusCard(
-                                                    title: ((snapshot.data!
-                                                                    .docs[index] as dynamic).data()[
-                                                                'orderCancelled'] ==
-                                                            'Done') ?"Servicio Cancelado":"¿Cancelar servicio?",
-                                                    isPressed: ((snapshot.data!
-                                                                    .docs[index] as dynamic)
-                                                                    .data()[
-                                                                'orderCancelled'] ==
-                                                            'Done')
-                                                        ? true
-                                                        : false,
-                                                    onPressed: () async {
-
-
-                                                      bool confirm = await _onBackPressed('De que quieres cancelar la orden');
-                                                      if(!confirm) return;
-                                                      if((snapshot.data!.docs[index] as dynamic)
-                                                          .data()['deliverd'] =='Done') {
-                                                        Fluttertoast.showToast(
-                                                          toastLength: Toast.LENGTH_LONG,
-                                                          msg: "No puede cancelar una orden que ya ha sido entregado"
-                                                        );
-                                                        return;
-                                                      }
-                                                      await ServiceOrderStatusService().cancelledOrder((snapshot.data!.docs[index] as dynamic)
-                                                                                .data()['orderId']);
-                                                      Fluttertoast.showToast(
-                                                          msg: "Servicio Cancelado");
-                                                    },
-                                                    time: DateFormat.yMMMd()
-                                                        .add_jm()
-                                                        .format(cancelledTime),
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                        SizedBox(height: 20),
-                                        Text(
-                                          ((snapshot.data!.docs[index] as dynamic)
-                                                      .data()['deliverd'] ==
-                                                  'Done')
-                                              ? "!!Felicitaciones!!\nEl servicio se completó con éxito."
-                                              : "",
-                                          textAlign: TextAlign.center,
-                                          style: TextStyle(
-                                            color: Colors.deepOrangeAccent[200],
-                                            fontSize: 16,
-                                            fontWeight: FontWeight.bold,
                                           ),
+                                        ],
+                                      ),
+                                      SizedBox(height: 20),
+                                      Text(
+                                        ((snapshot.data!.docs[index] as dynamic)
+                                                    .data()['deliverd'] ==
+                                                'Done')
+                                            ? "!!Felicitaciones!!\nEl servicio se completó con éxito."
+                                            : "",
+                                        textAlign: TextAlign.center,
+                                        style: TextStyle(
+                                          color: Colors.deepOrangeAccent[200],
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.bold,
                                         ),
-                                      ],
-                                    ),
+                                      ),
+                                    ],
                                   ),
                                 ),
                               ),
@@ -1224,6 +1221,9 @@ class OrderStatusCard extends StatelessWidget {
                   ],
                 )
               : ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.black
+                  ),
                   /* color: Colors.deepOrangeAccent[200],
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(8),

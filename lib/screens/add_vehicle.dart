@@ -49,6 +49,8 @@ class _AddVehicleState extends State<AddVehicle> {
   @override
   Widget build(BuildContext context) {
 
+    
+
     return Scaffold(
       appBar: AppBar(
         title: const Text("Agregar Carro"),
@@ -111,13 +113,19 @@ class _AddVehicleState extends State<AddVehicle> {
     final brands = await _brandVehicle.getBrandsVehicle();
     String brandId = '';
     var alert = AlertDialog(
-      content: Container(
+      
+      content: Container(  
         height: 100,
         child: Form(
           child: Column(
             children: [
               DropdownButtonFormField(
-                hint: const Text('Selecciona Marca del Vehiculo'),
+                isExpanded: true,
+                
+                hint: const Text(
+                  'Selecciona Marca del Vehiculo',
+                  
+                ),
                 items: 
                   brands.map((e) {
                     return DropdownMenuItem(

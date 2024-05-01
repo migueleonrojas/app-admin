@@ -164,7 +164,9 @@ class _ControlOrdersState extends State<ControlOrders> {
                               ),
                               Text(timeago.format(DateTime.tryParse((snapshot.data as dynamic)[index]['orderTime'].toDate().toString())!).toString()),
                               ElevatedButton(
-
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.black
+                                ),
                                 onPressed: () {
                                   Navigator.push(
                                     context,

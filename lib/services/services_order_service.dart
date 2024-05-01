@@ -59,13 +59,18 @@ class ServiceOrdersService {
           
           collection = FirebaseFirestore.instance
           .collection('serviceOrder')
+          .where(
+            'orderId',
+            isGreaterThanOrEqualTo: orderId,
+            isLessThan: orderId.substring(0, orderId.length-1) + String.fromCharCode(orderId.codeUnitAt(orderId.length - 1) + 1)
+          )
           /* .where(
             'orderId',
             isGreaterThanOrEqualTo: orderId,
             isLessThan: orderId.substring(0, orderId.length - 1) +
             String.fromCharCode(orderId.codeUnitAt(orderId.length - 1) + 1)
           ) */
-          .where('orderId',isEqualTo: orderId)
+          /* .where('orderId',isEqualTo: orderId) */
           
           .orderBy("orderTime", descending: true);
           /* .where('orderId',isEqualTo: orderId); */

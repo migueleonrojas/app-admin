@@ -5,7 +5,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:oilappadmin/services/brandMotorcycle.dart';
+import 'package:oilappadmin/services/brandVehicle.dart';
 
 import 'package:oilappadmin/widgets/customsimpledialogoption.dart';
 import 'package:oilappadmin/widgets/error_dialog.dart';
@@ -22,7 +22,7 @@ class _AddBrandVehicleState extends State<AddBrandVehicle> {
   XFile? file;
   GlobalKey<FormState> _brandformkey = GlobalKey<FormState>();
   TextEditingController brandController = TextEditingController();
-  BrandMotorcycle _brandMotorcycle = BrandMotorcycle();
+  BrandVehicleService _brandVehicle = BrandVehicleService();
   String brandsVehicleId = DateTime.now().microsecondsSinceEpoch.toString();
   @override
   Widget build(BuildContext context) {
@@ -74,7 +74,7 @@ class _AddBrandVehicleState extends State<AddBrandVehicle> {
                 else { return '${m[0]}'.toUpperCase();}
               });
 
-              bool isDuplicate = await _brandMotorcycle.validateNoDuplicateRows(newname, newname.toLowerCase());
+              bool isDuplicate = await _brandVehicle.validateNoDuplicateRows(newname, newname.toLowerCase());
               if(isDuplicate){
                 showDialog(
                 context: context,
@@ -196,14 +196,14 @@ class _AddBrandVehicleState extends State<AddBrandVehicle> {
   }
 
   saveItemInfo(downloadUrl) async {
-    final lastId = await _brandMotorcycle.getLastIdRow();
+    final lastId = await _brandVehicle.getLastIdRow();
     String name = brandController.text.trim().toLowerCase();
     String newname = name.replaceAllMapped(RegExp(r'(\s+[a-z]|^[a-z])'), (Match m) {
       if(m[0]!.length > 1) { return "-"+ "${m[0]}".trim().toUpperCase(); }
       else { return '${m[0]}'.toUpperCase();}
     });
     
-    _brandMotorcycle.createBrandMotorcycle(lastId, newname, newname.toLowerCase(), downloadUrl);
+    _brandVehicle.createBrandVehicle(lastId, newname, newname.toLowerCase(), downloadUrl);
    
   }
 }
